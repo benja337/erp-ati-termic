@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="o64gqAuin5KOEpOqGCG-">
+    <mxGraphModel dx="971" dy="485" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU58: Registrando Recepción de Insumos en Obra" vertex="1">
+          <mxGeometry height="25" width="1000" x="80" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="h_a" parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="SupervisorObra" vertex="1">
+          <mxGeometry height="55" width="50" x="45" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_v" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="VistaRecepcion" vertex="1">
+          <mxGeometry height="36" width="130" x="195" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_c" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="ControladorRecepcion" vertex="1">
+          <mxGeometry height="36" width="160" x="430" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_geo" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="WebGeolocationAPI" vertex="1">
+          <mxGeometry height="36" width="145" x="690" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_gd" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="GuiaDespacho" vertex="1">
+          <mxGeometry height="36" width="120" x="935" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_a" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="105" as="sourcePoint" />
+            <mxPoint x="70" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_v" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="94" as="sourcePoint" />
+            <mxPoint x="260" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_c" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="94" as="sourcePoint" />
+            <mxPoint x="510" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_geo" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="762" y="94" as="sourcePoint" />
+            <mxPoint x="762" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_gd" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="995" y="94" as="sourcePoint" />
+            <mxPoint x="995" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ac_a" parent="1" style="fillColor=none;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="570" width="8" x="66" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_v" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="550" width="8" x="256" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_c" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="500" width="8" x="506" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_geo" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="120" width="8" x="758" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_gd" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="80" width="8" x="991" y="488" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="1: presionarConfirmarRecepcionFinal()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="74" y="135" as="sourcePoint" />
+            <mxPoint x="256" y="135" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="2: solicitarPosicionGPS()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="264" y="168" as="sourcePoint" />
+            <mxPoint x="506" y="168" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="3: requestCurrentPosition()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="514" y="215" as="sourcePoint" />
+            <mxPoint x="758" y="215" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="4: return latitud, longitud actuales">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="758" y="258" as="sourcePoint" />
+            <mxPoint x="514" y="258" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="5: getCoordenadasObra(proyecto_codigo)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="514" y="295" as="sourcePoint" />
+            <mxPoint x="758" y="295" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="6: return latitud_obra, longitud_obra">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="758" y="330" as="sourcePoint" />
+            <mxPoint x="514" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="7: calcularDistancia(coords_supervisor, coords_obra)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="264" y="370" as="sourcePoint" />
+            <mxPoint x="506" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[supervisor fuera de rango → emitir alerta de recepción fuera del radio]&#xa;[dentro de rango → continuar]" vertex="1">
+          <mxGeometry height="34" width="400" x="518" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="m8" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="8: habilitarFinalizarRegistro()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="506" y="432" as="sourcePoint" />
+            <mxPoint x="264" y="432" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="9: confirmarRecepcionFinal()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="74" y="468" as="sourcePoint" />
+            <mxPoint x="256" y="468" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m10" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="10: UPDATE GuiaDespacho SET estado = &#39;Recibido&#39;, ubicacion_verificada = true">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="514" y="498" as="sourcePoint" />
+            <mxPoint x="991" y="498" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="11: return confirmacion actualizacion">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="991" y="545" as="sourcePoint" />
+            <mxPoint x="514" y="545" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="12: mostrarMensaje(&quot;Recepción confirmada. Ubicación Verificada&quot;)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="506" y="588" as="sourcePoint" />
+            <mxPoint x="264" y="588" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m13" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="13: &quot;Recepción confirmada. Ubicación Verificada&quot;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="256" y="628" as="sourcePoint" />
+            <mxPoint x="74" y="628" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

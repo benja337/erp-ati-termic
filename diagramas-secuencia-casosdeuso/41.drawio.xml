@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="o64gqAuin5KOEpOqGCG-">
+    <mxGraphModel dx="1732" dy="791" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU41: Graficando Desviación de Costos" vertex="1">
+          <mxGeometry height="25" width="1000" x="80" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="h_a" parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="AdministradorTotal" vertex="1">
+          <mxGeometry height="55" width="50" x="45" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_v" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="VistaControlCostos" vertex="1">
+          <mxGeometry height="36" width="145" x="185" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_c" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="ControladorCostos" vertex="1">
+          <mxGeometry height="36" width="150" x="420" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_p" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="Proyecto" vertex="1">
+          <mxGeometry height="36" width="110" x="665" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_f" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="Factura" vertex="1">
+          <mxGeometry height="36" width="110" x="870" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_ps" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="ParametroSistema" vertex="1">
+          <mxGeometry height="36" width="130" x="1010" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_a" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="105" as="sourcePoint" />
+            <mxPoint x="70" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_v" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="257" y="94" as="sourcePoint" />
+            <mxPoint x="257" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_c" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="495" y="94" as="sourcePoint" />
+            <mxPoint x="495" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_p" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="94" as="sourcePoint" />
+            <mxPoint x="720" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_f" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="925" y="94" as="sourcePoint" />
+            <mxPoint x="925" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_ps" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1075" y="94" as="sourcePoint" />
+            <mxPoint x="1075" y="790" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ac_a" parent="1" style="fillColor=none;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="640" width="8" x="66" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_v" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="620" width="8" x="253" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_c" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="570" width="8" x="491" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_p" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="160" width="8" x="716" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_f" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="80" width="8" x="921" y="295" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_ps" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="70" width="8" x="1071" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="1: accederControlCostos()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="74" y="135" as="sourcePoint" />
+            <mxPoint x="253" y="135" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="2: getProyectosConPresupuesto()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="261" y="168" as="sourcePoint" />
+            <mxPoint x="491" y="168" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="3: SELECT proyecto_codigo, presupuesto_asignado FROM Proyecto WHERE estado activo">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="499" y="205" as="sourcePoint" />
+            <mxPoint x="716" y="205" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="4: return proyectos activos con presupuesto">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="716" y="242" as="sourcePoint" />
+            <mxPoint x="499" y="242" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="5: seleccionarProyectoYPeriodo(proyecto_codigo, periodo)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="74" y="278" as="sourcePoint" />
+            <mxPoint x="253" y="278" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="6: SELECT SUM(monto_total) FROM Factura WHERE orden_compra relacionada al proyecto">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="499" y="315" as="sourcePoint" />
+            <mxPoint x="921" y="315" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="7: return gastos_reales_total">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="921" y="355" as="sourcePoint" />
+            <mxPoint x="499" y="355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[datos insuficientes → informar que no hay gastos registrados]&#xa;[datos OK → continuar]" vertex="1">
+          <mxGeometry height="34" width="360" x="505" y="363" as="geometry" />
+        </mxCell>
+        <mxCell id="m8" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="8: solicitarGraficoDesviacion()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="74" y="415" as="sourcePoint" />
+            <mxPoint x="253" y="415" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="9: calcularVarianzaFinanciera(presupuesto, gastos_reales)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="261" y="450" as="sourcePoint" />
+            <mxPoint x="491" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nota2" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[error de cálculo → detectar inconsistencias y solicitar revisión]&#xa;[cálculo OK → continuar]" vertex="1">
+          <mxGeometry height="34" width="370" x="505" y="458" as="geometry" />
+        </mxCell>
+        <mxCell id="m10" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="10: getUmbralDesviacion()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="499" y="520" as="sourcePoint" />
+            <mxPoint x="1071" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="11: return parametro_sistema_valor (umbral %)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1071" y="558" as="sourcePoint" />
+            <mxPoint x="499" y="558" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="12: desplegarGraficoConIndicadores(varianza, alertas)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="491" y="598" as="sourcePoint" />
+            <mxPoint x="261" y="598" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m13" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="13: gráfico con curvas de costo y alertas de desviación">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="253" y="638" as="sourcePoint" />
+            <mxPoint x="74" y="638" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

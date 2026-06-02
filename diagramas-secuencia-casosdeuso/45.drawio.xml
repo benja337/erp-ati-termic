@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="o64gqAuin5KOEpOqGCG-">
+    <mxGraphModel dx="1732" dy="791" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU45: Gestionando Portafolio de Obras" vertex="1">
+          <mxGeometry height="25" width="1000" x="80" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="h_a" parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="AdministradorTotal" vertex="1">
+          <mxGeometry height="55" width="50" x="45" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_v" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="VistaPortafolio" vertex="1">
+          <mxGeometry height="36" width="135" x="190" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_c" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="ControladorPortafolio" vertex="1">
+          <mxGeometry height="36" width="160" x="420" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_p" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="Proyecto" vertex="1">
+          <mxGeometry height="36" width="110" x="680" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_e" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="EvidenciaFotografica" vertex="1">
+          <mxGeometry height="36" width="150" x="885" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_a" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="105" as="sourcePoint" />
+            <mxPoint x="70" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_v" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="257" y="94" as="sourcePoint" />
+            <mxPoint x="257" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_c" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="500" y="94" as="sourcePoint" />
+            <mxPoint x="500" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_p" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="94" as="sourcePoint" />
+            <mxPoint x="735" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_e" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="960" y="94" as="sourcePoint" />
+            <mxPoint x="960" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ac_a" parent="1" style="fillColor=none;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="610" width="8" x="66" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_v" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="590" width="8" x="253" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_c" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="540" width="8" x="496" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_p" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="160" width="8" x="731" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_e" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="90" width="8" x="956" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="1: accederPortafolioObras()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="74" y="135" as="sourcePoint" />
+            <mxPoint x="253" y="135" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="2: getListadoProyectos()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="261" y="168" as="sourcePoint" />
+            <mxPoint x="496" y="168" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="3: SELECT * FROM Proyecto">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="504" y="205" as="sourcePoint" />
+            <mxPoint x="731" y="205" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="4: return listado proyectos">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="731" y="242" as="sourcePoint" />
+            <mxPoint x="504" y="242" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="5: desplegarListadoPortafolio(proyectos)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="496" y="278" as="sourcePoint" />
+            <mxPoint x="261" y="278" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="6: seleccionarOAgregarProyecto(proyecto_codigo)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="74" y="318" as="sourcePoint" />
+            <mxPoint x="253" y="318" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="7: habilitarCamposEdicion(titulo, descripcion, ubicacion)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="253" y="355" as="sourcePoint" />
+            <mxPoint x="74" y="355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m8" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="8: redactarContenidoYSeleccionarFotos(datos, imagenes)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="74" y="395" as="sourcePoint" />
+            <mxPoint x="253" y="395" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="9: validarFormatoYTamanoImagenes(imagenes)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="261" y="435" as="sourcePoint" />
+            <mxPoint x="496" y="435" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[formato no compatible → informar y solicitar JPG o PNG]&#xa;[error de carga en servidor → permitir reintentar]&#xa;[validación OK → continuar]" vertex="1">
+          <mxGeometry height="48" width="380" x="508" y="442" as="geometry" />
+        </mxCell>
+        <mxCell id="m10" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="10: confirmarActualizacion()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="74" y="508" as="sourcePoint" />
+            <mxPoint x="253" y="508" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="11: UPDATE Proyecto SET nombre_obra, correo_contacto WHERE proyecto_codigo">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="504" y="545" as="sourcePoint" />
+            <mxPoint x="731" y="545" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="12: INSERT INTO EvidenciaFotografica(url_foto, fecha, proyecto_codigo)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="504" y="578" as="sourcePoint" />
+            <mxPoint x="956" y="578" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m13" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="13: return confirmacion almacenamiento">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="956" y="618" as="sourcePoint" />
+            <mxPoint x="504" y="618" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m14" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="14: mostrarMensaje(&quot;Portafolio actualizado exitosamente&quot;)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="496" y="658" as="sourcePoint" />
+            <mxPoint x="261" y="658" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m15" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="15: &quot;Portafolio actualizado exitosamente&quot;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="253" y="698" as="sourcePoint" />
+            <mxPoint x="74" y="698" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

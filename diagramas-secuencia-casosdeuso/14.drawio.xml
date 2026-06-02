@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="o64gqAuin5KOEpOqGCG-">
+    <mxGraphModel dx="1645" dy="751" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tit" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontStyle=1;" value="CU14: Registrando Bitácora Técnica Diaria" vertex="1">
+          <mxGeometry height="25" width="1000" x="80" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="h_a" parent="1" style="shape=umlActor;whiteSpace=wrap;html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;fontSize=10;fontStyle=1;" value="SupervisorObra" vertex="1">
+          <mxGeometry height="55" width="40" x="55" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h_v" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="VistaBitacora" vertex="1">
+          <mxGeometry height="36" width="130" x="200" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_c" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="ControladorBitacora" vertex="1">
+          <mxGeometry height="36" width="150" x="430" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_p" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="Proyecto" vertex="1">
+          <mxGeometry height="36" width="110" x="680" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="h_b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;" value="BitacoraDiaria" vertex="1">
+          <mxGeometry height="36" width="120" x="880" y="58" as="geometry" />
+        </mxCell>
+        <mxCell id="ll_a" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="75" y="105" as="sourcePoint" />
+            <mxPoint x="75" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_v" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="265" y="94" as="sourcePoint" />
+            <mxPoint x="265" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_c" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="505" y="94" as="sourcePoint" />
+            <mxPoint x="505" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_p" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="735" y="94" as="sourcePoint" />
+            <mxPoint x="735" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ll_b" edge="1" parent="1" style="endArrow=none;dashed=1;strokeColor=#000000;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="940" y="94" as="sourcePoint" />
+            <mxPoint x="940" y="730" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ac_a" parent="1" style="fillColor=none;strokeColor=default;" vertex="1">
+          <mxGeometry height="580" width="8" x="71" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_v" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="560" width="8" x="261" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_c" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="510" width="8" x="501" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_p" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="80" width="8" x="731" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="ac_b" parent="1" style="fillColor=#ffffff;strokeColor=#000000;" vertex="1">
+          <mxGeometry height="80" width="8" x="936" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="1: seleccionarProyecto()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="79" y="135" as="sourcePoint" />
+            <mxPoint x="261" y="135" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="2: getProyecto(usuario_rut)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="269" y="168" as="sourcePoint" />
+            <mxPoint x="501" y="168" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="3: SELECT * FROM Proyecto">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="509" y="192" as="sourcePoint" />
+            <mxPoint x="731" y="192" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="4: return proyecto_codigo, nombre_obra">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="731" y="225" as="sourcePoint" />
+            <mxPoint x="509" y="225" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="5: desplegarFormulario(fecha_actual)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="501" y="268" as="sourcePoint" />
+            <mxPoint x="269" y="268" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="6: redactarYConfirmar(descripcion_actividades)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="79" y="315" as="sourcePoint" />
+            <mxPoint x="261" y="315" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m7" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="7: validarTexto(texto)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="269" y="365" as="sourcePoint" />
+            <mxPoint x="501" y="365" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nota1" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[texto insuficiente → solicitar más información]&#xa;[texto suficiente → continuar]" vertex="1">
+          <mxGeometry height="34" width="310" x="520" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="m8" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=10;" value="8: INSERT INTO BitacoraDiaria(descripcion, fecha, usuario_rut, proyecto_codigo)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="509" y="438" as="sourcePoint" />
+            <mxPoint x="936" y="438" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nota2" parent="1" style="text;html=1;strokeColor=#999999;fillColor=#ffffcc;fontSize=9;align=left;rounded=1;" value="[error de red → guardar borrador local]&#xa;[conexión OK → persistir en BD]" vertex="1">
+          <mxGeometry height="34" width="290" x="520" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="m9" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="9: return bitacora_diaria_id">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="936" y="535" as="sourcePoint" />
+            <mxPoint x="509" y="535" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m10" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="10: mostrarConfirmacion(&quot;Bitácora registrada exitosamente&quot;)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="501" y="578" as="sourcePoint" />
+            <mxPoint x="269" y="578" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;fontSize=10;" value="11: &quot;Bitácora registrada exitosamente&quot;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="261" y="618" as="sourcePoint" />
+            <mxPoint x="79" y="618" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
