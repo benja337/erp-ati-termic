@@ -8,7 +8,11 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST || 'localhost',
     dialect: 'mysql',
     logging: false,
-    pool: { max: 10, min: 0, acquire: 30000, idle: 10000 }
+    pool: { max: 10, min: 0, acquire: 30000, idle: 10000 },
+    define: {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_0900_ai_ci'
+    }
   }
 );
 
