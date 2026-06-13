@@ -58,6 +58,77 @@ async function getGastosReales(req, res) {
   }
 }
 
+async function getGastosPorMes(req, res) {
+  try {
+    const { codigo } = req.params;
+
+    const proyecto = await Proyecto.findByPk(codigo);
+    if (!proyecto) {
+      return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
+    }
+
+    // Obtiene gastos reales agrupados por mes (últimos 12 meses)
+    const gastosMensuales = await sequelize.query(`
+      SELECT
+        DATE_FORMAT(f.factura_fecha, '%Y-%m') AS mes,
+        SUM(f.factura_monto_total)            AS gasto_real
+      FROM FACTURA f
+      INNER JOIN ORDEN_COMPRA oc ON f.orden_compra_id = oc.orden_compra_id
+      WHERE oc.proyecto_codigo_correlativo = :codigo
+        AND f.factura_fecha >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+      GROUP BY mes
+      ORDER BY mes ASC
+    `, { replacements: { codigo }, type: sequelize.QueryTypes.SELECT });
+
+    const presupuesto = parseFloat(proyecto.proyecto_presupuesto_asignado) || 0;
+
+    // Construye serie de 12 meses hacia atrás desde hoy
+    const ahora = new Date();
+    const meses = [];
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(ahora.getFullYear(), ahora.getMonth() - i, 1);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = d.toLocaleDateString('es-CL', { month: 'short', year: '2-digit' });
+      const encontrado = gastosMensuales.find(g => g.mes === key);
+      meses.push({
+        mes: key,
+        label,
+        gasto_real: encontrado ? parseFloat(encontrado.gasto_real) : 0,
+        // presupuesto mensual distribuido uniformemente
+        presupuesto_mensual: Math.round(presupuesto / 12)
+      });
+    }
+
+    // Acumulado para línea de tendencia
+    let acumuladoReal = 0;
+    let acumuladoPpto = 0;
+    const serie = meses.map(m => {
+      acumuladoReal += m.gasto_real;
+      acumuladoPpto += m.presupuesto_mensual;
+      return { ...m, acumulado_real: acumuladoReal, acumulado_ppto: acumuladoPpto };
+    });
+
+    const totalGastos = acumuladoReal;
+    const varianza = presupuesto - totalGastos;
+    const porcentaje_desviacion = presupuesto > 0 ? ((totalGastos - presupuesto) / presupuesto) * 100 : 0;
+
+    return res.json({
+      success: true,
+      data: {
+        proyecto: proyecto.proyecto_nombre_obra,
+        presupuesto,
+        total_gastos: totalGastos,
+        varianza,
+        porcentaje_desviacion,
+        serie
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener gastos por mes' });
+  }
+}
+
 async function getUmbralDesviacion(req, res) {
   try {
     const parametro = await ParametroSistema.findOne({
@@ -73,4 +144,4 @@ async function getUmbralDesviacion(req, res) {
   }
 }
 
-module.exports = { getProyectosConPresupuesto, getGastosReales, getUmbralDesviacion };
+module.exports = { getProyectosConPresupuesto, getGastosReales, getGastosPorMes, getUmbralDesviacion };

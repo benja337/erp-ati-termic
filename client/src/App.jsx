@@ -7,6 +7,9 @@ import CajaChica from './pages/CajaChica';
 import SSO from './pages/SSO';
 import Evidencia from './pages/Evidencia';
 import ValidarEvidencias from './pages/ValidarEvidencias';
+import OrdenCompra from './pages/OrdenCompra';
+import VincularFactura from './pages/VincularFactura';
+import ControlCostos from './pages/ControlCostos';
 
 function PrivateLayout({ children }) {
   const token = localStorage.getItem('token');
@@ -37,6 +40,9 @@ export default function App() {
         <Route path="/sso" element={<PrivateLayout><SSO /></PrivateLayout>} />
         <Route path="/evidencia" element={<PrivateLayout><Evidencia /></PrivateLayout>} />
         <Route path="/validar" element={<PrivateLayout><AdminRoute><ValidarEvidencias /></AdminRoute></PrivateLayout>} />
+        <Route path="/orden-compra" element={<PrivateLayout><AdminRoute><OrdenCompra /></AdminRoute></PrivateLayout>} />
+        <Route path="/vincular-factura" element={<PrivateLayout><AdminRoute><VincularFactura /></AdminRoute></PrivateLayout>} />
+        <Route path="/control-costos" element={<PrivateLayout><AdminRoute><ControlCostos /></AdminRoute></PrivateLayout>} />
         <Route path="/" element={<Navigate to="/bitacora" replace />} />
         <Route path="*" element={<Navigate to="/bitacora" replace />} />
       </Routes>

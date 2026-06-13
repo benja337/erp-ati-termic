@@ -99,10 +99,14 @@ async function getPendientes(req, res) {
 async function validarEvidencia(req, res) {
   try {
     const { id } = req.params;
-    const { estado } = req.body;
+    const { estado, comentario } = req.body;
 
-    if (!['aprobado', 'rechazado'].includes(estado)) {
-      return res.status(400).json({ success: false, error: 'Estado debe ser "aprobado" o "rechazado"' });
+    if (!['aprobado', 'rechazado', 're_captura'].includes(estado)) {
+      return res.status(400).json({ success: false, error: 'Estado debe ser "aprobado", "rechazado" o "re_captura"' });
+    }
+
+    if (estado === 'rechazado' && !comentario?.trim()) {
+      return res.status(400).json({ success: false, error: 'El motivo de rechazo es requerido' });
     }
 
     const evidencia = await EvidenciaFotografica.findByPk(id);
@@ -110,11 +114,13 @@ async function validarEvidencia(req, res) {
       return res.status(404).json({ success: false, error: 'Evidencia no encontrada' });
     }
 
-    await evidencia.update({ evidencia_fotografica_estado_aprobacion: estado });
+    await evidencia.update({
+      evidencia_fotografica_estado_aprobacion: estado
+    });
 
     await LogAuditoria.create({
       log_auditoria_fecha_hora: new Date(),
-      log_auditoria_accion: `Evidencia #${id} ${estado}`,
+      log_auditoria_accion: `Evidencia #${id} ${estado}${comentario ? ': ' + comentario.substring(0, 80) : ''}`,
       log_auditoria_modulo: 'EVIDENCIA',
       usuario_rut: req.user.rut
     });

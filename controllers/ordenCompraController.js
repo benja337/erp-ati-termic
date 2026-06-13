@@ -2,12 +2,27 @@ const SolicitudMaterial = require('../models/SolicitudMaterial');
 const OrdenCompra = require('../models/OrdenCompra');
 const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
 const Proveedor = require('../models/Proveedor');
+const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
+
+async function getProveedores(req, res) {
+  try {
+    const proveedores = await Proveedor.findAll({
+      order: [['proveedor_razon_social', 'ASC']]
+    });
+    return res.json({ success: true, data: proveedores });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener proveedores' });
+  }
+}
 
 async function getSolicitudesPendientes(req, res) {
   try {
     const solicitudes = await SolicitudMaterial.findAll({
-      where: { solicitud_material_estado: 'pendiente' }
+      where: { solicitud_material_estado: 'pendiente' },
+      include: [{ model: Proyecto, attributes: ['proyecto_nombre_obra', 'proyecto_codigo_correlativo'] }],
+      order: [['solicitud_material_fecha', 'DESC']]
     });
     return res.json({ success: true, data: solicitudes });
   } catch (err) {
@@ -69,4 +84,4 @@ async function generarOrdenCompra(req, res) {
   }
 }
 
-module.exports = { getSolicitudesPendientes, generarOrdenCompra };
+module.exports = { getProveedores, getSolicitudesPendientes, generarOrdenCompra };

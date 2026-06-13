@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { BookOpen, DollarSign, AlertTriangle, Camera, CheckSquare, LogOut, Menu, X } from 'lucide-react';
+import { BookOpen, DollarSign, AlertTriangle, Camera, CheckSquare, ShoppingCart, FileText, BarChart2, LogOut, Menu, X } from 'lucide-react';
 import logo from '../assets/logo.png';
 
 const NAV_ITEMS = [
@@ -9,6 +9,27 @@ const NAV_ITEMS = [
   { to: '/sso', icon: AlertTriangle, label: 'Incidentes SSO' },
   { to: '/evidencia', icon: Camera, label: 'Evidencias' }
 ];
+
+const ADMIN_ITEMS = [
+  { to: '/validar', icon: CheckSquare, label: 'Validar Evidencias' },
+  { to: '/orden-compra', icon: ShoppingCart, label: 'Órdenes de Compra' },
+  { to: '/vincular-factura', icon: FileText, label: 'Vincular Facturas' },
+  { to: '/control-costos', icon: BarChart2, label: 'Control de Costos' }
+];
+
+const navStyle = (isActive) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+  padding: '10px 20px',
+  color: isActive ? '#E6EDF3' : '#8B949E',
+  background: isActive ? 'var(--color-bg-elevated)' : 'transparent',
+  borderLeft: isActive ? '3px solid var(--color-blue)' : '3px solid transparent',
+  textDecoration: 'none',
+  fontSize: 14,
+  fontWeight: 500,
+  transition: 'all 0.15s'
+});
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -37,52 +58,35 @@ export default function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav style={{ flex: 1, padding: '16px 0' }}>
+      <nav style={{ flex: 1, padding: '16px 0', overflowY: 'auto' }}>
         {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            onClick={() => setMobileOpen(false)}
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '10px 20px',
-              color: isActive ? '#E6EDF3' : '#8B949E',
-              background: isActive ? 'var(--color-bg-elevated)' : 'transparent',
-              borderLeft: isActive ? '3px solid var(--color-blue)' : '3px solid transparent',
-              textDecoration: 'none',
-              fontSize: 14,
-              fontWeight: 500,
-              transition: 'all 0.15s'
-            })}
-          >
+          <NavLink key={to} to={to} onClick={() => setMobileOpen(false)}
+            style={({ isActive }) => navStyle(isActive)}>
             <Icon size={16} />
             {label}
           </NavLink>
         ))}
 
         {usuario.rol === 'admin' && (
-          <NavLink
-            to="/validar"
-            onClick={() => setMobileOpen(false)}
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '10px 20px',
-              color: isActive ? '#E6EDF3' : '#8B949E',
-              background: isActive ? 'var(--color-bg-elevated)' : 'transparent',
-              borderLeft: isActive ? '3px solid var(--color-blue)' : '3px solid transparent',
-              textDecoration: 'none',
-              fontSize: 14,
-              fontWeight: 500,
-              transition: 'all 0.15s'
-            })}
-          >
-            <CheckSquare size={16} />
-            Validar Evidencias
-          </NavLink>
+          <>
+            <div style={{
+              padding: '12px 20px 6px',
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'var(--color-text-muted)'
+            }}>
+              Administración
+            </div>
+            {ADMIN_ITEMS.map(({ to, icon: Icon, label }) => (
+              <NavLink key={to} to={to} onClick={() => setMobileOpen(false)}
+                style={({ isActive }) => navStyle(isActive)}>
+                <Icon size={16} />
+                {label}
+              </NavLink>
+            ))}
+          </>
         )}
       </nav>
 
@@ -135,15 +139,9 @@ export default function Sidebar() {
         <>
           <div
             onClick={() => setMobileOpen(false)}
-            style={{
-              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
-              zIndex: 200
-            }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 200 }}
           />
-          <div style={{
-            position: 'fixed', top: 0, left: 0, zIndex: 300,
-            animation: 'slideRight 0.2s ease'
-          }}>
+          <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 300, animation: 'slideRight 0.2s ease' }}>
             {sidebarContent}
             <button
               onClick={() => setMobileOpen(false)}
