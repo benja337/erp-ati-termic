@@ -62,7 +62,7 @@ async function getProyecto(req, res) {
 async function actualizarProyecto(req, res) {
   try {
     const { codigo } = req.params;
-    const { proyecto_nombre_obra, proyecto_correo_contacto } = req.body;
+    const { proyecto_nombre_obra, proyecto_correo_contacto, proyecto_descripcion_tecnica, proyecto_ubicacion } = req.body;
 
     const proyecto = await Proyecto.findByPk(codigo);
     if (!proyecto) {
@@ -71,7 +71,9 @@ async function actualizarProyecto(req, res) {
 
     await proyecto.update({
       ...(proyecto_nombre_obra && { proyecto_nombre_obra }),
-      ...(proyecto_correo_contacto && { proyecto_correo_contacto })
+      ...(proyecto_correo_contacto && { proyecto_correo_contacto }),
+      ...(proyecto_descripcion_tecnica !== undefined && { proyecto_descripcion_tecnica }),
+      ...(proyecto_ubicacion !== undefined && { proyecto_ubicacion })
     });
 
     if (req.files && req.files.length > 0) {

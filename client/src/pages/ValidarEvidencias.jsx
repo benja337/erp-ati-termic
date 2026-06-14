@@ -65,7 +65,7 @@ export default function ValidarEvidencias() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 0 }}>
           <CheckSquare size={20} />
-          Validar Evidencias de Avance
+          Revisiones Pendientes
         </h1>
         <button className="btn btn-secondary" onClick={cargar} disabled={loading} style={{ height: 36 }}>
           <RefreshCw size={14} />

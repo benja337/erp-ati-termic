@@ -48,4 +48,18 @@ async function registrarBitacora(req, res) {
   }
 }
 
-module.exports = { getProyectos, registrarBitacora };
+async function getBitacorasByProyecto(req, res) {
+  try {
+    const { codigo } = req.params;
+    const bitacoras = await BitacoraDiaria.findAll({
+      where: { proyecto_codigo_correlativo: codigo },
+      order: [['bitacora_diaria_fecha', 'DESC'], ['bitacora_diaria_id', 'DESC']]
+    });
+    return res.json({ success: true, data: bitacoras });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener bitácoras' });
+  }
+}
+
+module.exports = { getProyectos, registrarBitacora, getBitacorasByProyecto };

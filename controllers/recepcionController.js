@@ -49,28 +49,32 @@ async function confirmarRecepcion(req, res) {
       parseFloat(longitud_obra)
     );
 
-    if (distancia > RADIO_MAXIMO_METROS) {
-      return res.status(400).json({
-        success: false,
-        error: `El supervisor está a ${Math.round(distancia)}m de la obra. Debe estar dentro de ${RADIO_MAXIMO_METROS}m para confirmar recepción`
-      });
-    }
+    const fueraDeRango = distancia > RADIO_MAXIMO_METROS;
+    const ubicacionVerificada = !fueraDeRango;
 
     await guia.update({
       guia_despacho_estado: 'Recibido',
-      guia_despacho_ubicacion_verificada: true,
+      guia_despacho_ubicacion_verificada: ubicacionVerificada,
       guia_despacho_latitud_recepcion: parseFloat(latitud_supervisor),
       guia_despacho_longitud_recepcion: parseFloat(longitud_supervisor)
     });
 
     await LogAuditoria.create({
       log_auditoria_fecha_hora: new Date(),
-      log_auditoria_accion: `Recepción de guía ${id} confirmada (distancia: ${Math.round(distancia)}m)`,
+      log_auditoria_accion: `Recepción de guía ${id} ${ubicacionVerificada ? 'verificada' : 'FUERA DE RANGO'} (distancia: ${Math.round(distancia)}m)`,
       log_auditoria_modulo: 'RECEPCION',
       usuario_rut: req.user.rut
     });
 
-    return res.json({ success: true, data: { guia_despacho_id: parseInt(id), distancia_metros: Math.round(distancia) } });
+    return res.json({
+      success: true,
+      data: {
+        guia_despacho_id: parseInt(id),
+        distancia_metros: Math.round(distancia),
+        fuera_de_rango: fueraDeRango,
+        ubicacion_verificada: ubicacionVerificada
+      }
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ success: false, error: 'Error al confirmar recepción' });

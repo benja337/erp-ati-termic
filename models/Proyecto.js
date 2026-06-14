@@ -8,7 +8,9 @@ const Proyecto = sequelize.define('Proyecto', {
   proyecto_presupuesto_asignado: { type: DataTypes.DECIMAL(15, 2), allowNull: false },
   proyecto_correo_contacto: { type: DataTypes.STRING(150), allowNull: false },
   estado_proyecto_id: { type: DataTypes.INTEGER, allowNull: false },
-  proveedor_rut: { type: DataTypes.STRING(20), allowNull: true }
+  proveedor_rut: { type: DataTypes.STRING(20), allowNull: true },
+  proyecto_descripcion_tecnica: { type: DataTypes.TEXT, allowNull: true },
+  proyecto_ubicacion: { type: DataTypes.STRING(255), allowNull: true }
 }, {
   tableName: 'PROYECTO',
   timestamps: false

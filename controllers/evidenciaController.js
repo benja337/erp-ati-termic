@@ -68,17 +68,19 @@ async function subirEvidencia(req, res) {
       hito_tecnico_id: parseInt(hito_tecnico_id)
     });
 
-    await LogAuditoria.create({
-      log_auditoria_fecha_hora: new Date(),
-      log_auditoria_accion: `Evidencia fotográfica subida para hito ${hito_tecnico_id}`,
-      log_auditoria_modulo: 'EVIDENCIA',
-      usuario_rut: req.user.rut
-    });
+    try {
+      await LogAuditoria.create({
+        log_auditoria_fecha_hora: new Date(),
+        log_auditoria_accion: `Evidencia fotográfica subida para hito ${hito_tecnico_id}`,
+        log_auditoria_modulo: 'EVIDENCIA',
+        usuario_rut: req.user.rut
+      });
+    } catch (_) { /* log no crítico */ }
 
     return res.status(201).json({ success: true, data: evidencia });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, error: 'Error al subir evidencia' });
+    return res.status(500).json({ success: false, error: err.message || 'Error al subir evidencia' });
   }
 }
 

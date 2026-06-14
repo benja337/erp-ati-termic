@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Download, AlertTriangle, FileText } from 'lucide-react';
+import { Search, Download, AlertTriangle, FileText, Eye, X } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
@@ -18,6 +18,7 @@ export default function BuscadorDocumentos() {
   const [resultados, setResultados] = useState([]);
   const [buscado, setBuscado] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState(null);
 
   const handleBuscar = async e => {
     e.preventDefault();
@@ -119,12 +120,12 @@ export default function BuscadorDocumentos() {
                     <th>Emisión</th>
                     <th>Vencimiento</th>
                     <th>Estado</th>
-                    <th>Archivo</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {resultados.map(doc => (
-                    <tr key={doc.documento_legal_id}>
+                    <tr key={doc.documento_legal_id} style={{ background: previewDoc?.documento_legal_id === doc.documento_legal_id ? 'var(--color-bg-elevated)' : undefined }}>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                           <FileText size={13} color="var(--color-text-muted)" />
@@ -146,16 +147,26 @@ export default function BuscadorDocumentos() {
                       <td><Badge value={doc.documento_legal_estado} /></td>
                       <td>
                         {doc.archivo_disponible ? (
-                          <a
-                            href={doc.documento_legal_url_pdf}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="btn btn-secondary"
-                            style={{ height: 30, padding: '0 10px', fontSize: 12 }}
-                          >
-                            <Download size={12} />
-                            Descargar
-                          </a>
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <button
+                              className="btn btn-secondary"
+                              style={{ height: 30, padding: '0 10px', fontSize: 12 }}
+                              onClick={() => setPreviewDoc(previewDoc?.documento_legal_id === doc.documento_legal_id ? null : doc)}
+                            >
+                              <Eye size={12} />
+                              {previewDoc?.documento_legal_id === doc.documento_legal_id ? 'Cerrar' : 'Vista Previa'}
+                            </button>
+                            <a
+                              href={doc.documento_legal_url_pdf}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn btn-secondary"
+                              style={{ height: 30, padding: '0 10px', fontSize: 12 }}
+                            >
+                              <Download size={12} />
+                              Descargar
+                            </a>
+                          </div>
                         ) : (
                           <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--color-danger)' }}>
                             <AlertTriangle size={12} />
@@ -167,6 +178,37 @@ export default function BuscadorDocumentos() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* Panel de vista previa PDF */}
+          {previewDoc && (
+            <div style={{ borderTop: '1px solid var(--color-border)', padding: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Eye size={14} />
+                  Vista Previa — {TIPO_LABELS[previewDoc.documento_legal_tipo] || previewDoc.documento_legal_tipo}
+                  {previewDoc.proyecto_codigo_correlativo && ` · ${previewDoc.proyecto_codigo_correlativo}`}
+                </div>
+                <button
+                  className="btn btn-secondary"
+                  style={{ height: 28, padding: '0 10px', fontSize: 12 }}
+                  onClick={() => setPreviewDoc(null)}
+                >
+                  <X size={12} /> Cerrar
+                </button>
+              </div>
+              <iframe
+                src={previewDoc.documento_legal_url_pdf}
+                title="Vista previa del documento"
+                style={{
+                  width: '100%',
+                  height: 560,
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 4,
+                  background: '#fff'
+                }}
+              />
             </div>
           )}
         </div>

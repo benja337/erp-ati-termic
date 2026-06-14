@@ -11,7 +11,7 @@ export default function Portafolio() {
   const [editando, setEditando] = useState(null);
   const [imagenes, setImagenes] = useState([]);
   const [guardando, setGuardando] = useState(false);
-  const [form, setForm] = useState({ proyecto_nombre_obra: '', proyecto_correo_contacto: '' });
+  const [form, setForm] = useState({ proyecto_nombre_obra: '', proyecto_correo_contacto: '', proyecto_descripcion_tecnica: '', proyecto_ubicacion: '' });
 
   useEffect(() => {
     cargarProyectos();
@@ -29,7 +29,9 @@ export default function Portafolio() {
     setEditando(p.proyecto_codigo_correlativo);
     setForm({
       proyecto_nombre_obra: p.proyecto_nombre_obra,
-      proyecto_correo_contacto: p.proyecto_correo_contacto
+      proyecto_correo_contacto: p.proyecto_correo_contacto,
+      proyecto_descripcion_tecnica: p.proyecto_descripcion_tecnica || '',
+      proyecto_ubicacion: p.proyecto_ubicacion || ''
     });
     setImagenes([]);
   };
@@ -60,6 +62,8 @@ export default function Portafolio() {
       const fd = new FormData();
       fd.append('proyecto_nombre_obra', form.proyecto_nombre_obra);
       fd.append('proyecto_correo_contacto', form.proyecto_correo_contacto);
+      fd.append('proyecto_descripcion_tecnica', form.proyecto_descripcion_tecnica);
+      fd.append('proyecto_ubicacion', form.proyecto_ubicacion);
       imagenes.forEach(img => fd.append('imagenes', img));
 
       await api.put(`/portafolio/${codigo}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
@@ -122,7 +126,7 @@ export default function Portafolio() {
               <div style={{ borderTop: '1px solid var(--color-border)', padding: 20 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label">Nombre de Obra</label>
+                    <label className="form-label">Nombre / Título de Obra</label>
                     <input
                       type="text"
                       className="form-input"
@@ -130,6 +134,30 @@ export default function Portafolio() {
                       onChange={e => setForm(f => ({ ...f, proyecto_nombre_obra: e.target.value }))}
                     />
                   </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Ubicación</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Ej: Santiago, Región Metropolitana"
+                      value={form.proyecto_ubicacion}
+                      onChange={e => setForm(f => ({ ...f, proyecto_ubicacion: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Descripción Técnica</label>
+                  <textarea
+                    className="form-textarea"
+                    rows={3}
+                    placeholder="Describe el alcance técnico del proyecto, sistemas instalados, características especiales..."
+                    value={form.proyecto_descripcion_tecnica}
+                    onChange={e => setForm(f => ({ ...f, proyecto_descripcion_tecnica: e.target.value }))}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label">Correo de Contacto</label>
                     <input

@@ -88,12 +88,14 @@ async function registrarEgreso(req, res) {
       proyecto_codigo_correlativo
     });
 
-    await LogAuditoria.create({
-      log_auditoria_fecha_hora: new Date(),
-      log_auditoria_accion: `Egreso de $${monto} registrado en proyecto ${proyecto_codigo_correlativo}`,
-      log_auditoria_modulo: 'CAJA_CHICA',
-      usuario_rut: req.user.rut
-    });
+    try {
+      await LogAuditoria.create({
+        log_auditoria_fecha_hora: new Date(),
+        log_auditoria_accion: `Egreso de $${monto} registrado en proyecto ${proyecto_codigo_correlativo}`,
+        log_auditoria_modulo: 'CAJA_CHICA',
+        usuario_rut: req.user.rut
+      });
+    } catch (_) { /* log no crítico */ }
 
     return res.status(201).json({ success: true, data: egreso });
   } catch (err) {
@@ -102,4 +104,18 @@ async function registrarEgreso(req, res) {
   }
 }
 
-module.exports = { getProyectos, getSaldo, registrarEgreso };
+async function getEgresosByProyecto(req, res) {
+  try {
+    const { codigo } = req.params;
+    const egresos = await EgresoCajaChica.findAll({
+      where: { proyecto_codigo_correlativo: codigo },
+      order: [['egreso_caja_chica_fecha', 'DESC'], ['egreso_caja_chica_id', 'DESC']]
+    });
+    return res.json({ success: true, data: egresos });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al obtener egresos' });
+  }
+}
+
+module.exports = { getProyectos, getSaldo, registrarEgreso, getEgresosByProyecto };

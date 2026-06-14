@@ -147,7 +147,7 @@ async function crearProveedor(req, res) {
     return res.status(201).json({ success: true, data: proveedor });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, error: 'Error al crear proveedor' });
+    return res.status(500).json({ success: false, error: err.message || 'Error al crear proveedor' });
   }
 }
 
@@ -219,7 +219,7 @@ async function crearSolicitudMaterial(req, res) {
     return res.status(201).json({ success: true, data: solicitud });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, error: 'Error al crear solicitud de material' });
+    return res.status(500).json({ success: false, error: err.message || 'Error al crear solicitud de material' });
   }
 }
 

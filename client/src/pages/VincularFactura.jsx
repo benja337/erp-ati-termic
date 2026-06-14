@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FileText, Link, RefreshCw, ChevronDown, ChevronUp, AlertTriangle } from 'lucide-react';
+import { FileText, Link, RefreshCw, ChevronDown, ChevronUp, AlertTriangle, Package } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
@@ -168,6 +168,38 @@ export default function VincularFactura() {
                                 <td colSpan={3} style={{ fontWeight: 700, textAlign: 'right', textTransform: 'uppercase', fontSize: 12 }}>Total OC</td>
                                 <td style={{ textAlign: 'right', fontWeight: 700, color: 'var(--color-green)' }}>{formatPeso(orden.total_calculado)}</td>
                               </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Guías de despacho asociadas */}
+                    {orden.GuiaDespachos?.length > 0 && (
+                      <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 18, background: 'var(--color-bg-elevated)' }}>
+                        <div style={{ padding: '10px 16px', borderBottom: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <Package size={13} color="var(--color-text-muted)" />
+                          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            Guías de Despacho ({orden.GuiaDespachos.length})
+                          </span>
+                        </div>
+                        <div className="table-container">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>N° Guía</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {orden.GuiaDespachos.map(g => (
+                                <tr key={g.guia_despacho_id}>
+                                  <td style={{ fontFamily: 'monospace', fontSize: 13 }}>{g.guia_despacho_numero}</td>
+                                  <td style={{ fontSize: 13 }}>{g.guia_despacho_fecha}</td>
+                                  <td><Badge value={g.guia_despacho_estado} /></td>
+                                </tr>
+                              ))}
                             </tbody>
                           </table>
                         </div>

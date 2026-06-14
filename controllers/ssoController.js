@@ -52,12 +52,14 @@ async function registrarIncidente(req, res) {
       proyecto_codigo_correlativo,
       incidente_sso_descripcion,
       incidente_sso_gravedad,
+      incidente_sso_tipo,
+      incidente_sso_lugar,
       incidente_sso_fecha_hora,
       trabajadores_involucrados
     } = req.body;
 
-    if (!proyecto_codigo_correlativo || !incidente_sso_descripcion || !incidente_sso_gravedad) {
-      return res.status(400).json({ success: false, error: 'Proyecto, descripción y gravedad son requeridos' });
+    if (!proyecto_codigo_correlativo || !incidente_sso_descripcion || !incidente_sso_gravedad || !incidente_sso_tipo) {
+      return res.status(400).json({ success: false, error: 'Proyecto, tipo, descripción y gravedad son requeridos' });
     }
 
     let trabajadoresArray = [];
@@ -83,10 +85,18 @@ async function registrarIncidente(req, res) {
       }
     }
 
+    let urlFotos = null;
+    if (req.files && req.files.length > 0) {
+      urlFotos = JSON.stringify(req.files.map(f => `/uploads/sso/${f.filename}`));
+    }
+
     const incidente = await IncidenteSSO.create({
       incidente_sso_descripcion,
       incidente_sso_fecha_hora: incidente_sso_fecha_hora || new Date(),
       incidente_sso_gravedad,
+      incidente_sso_tipo: incidente_sso_tipo || null,
+      incidente_sso_lugar: incidente_sso_lugar || null,
+      incidente_sso_url_fotos: urlFotos,
       proyecto_codigo_correlativo
     });
 

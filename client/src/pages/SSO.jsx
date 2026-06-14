@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { AlertTriangle, Plus, Trash2, Send } from 'lucide-react';
+import { AlertTriangle, Plus, Trash2, Send, Camera, X } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
 
 const GRAVEDADES = ['leve', 'grave', 'fatal'];
+const TIPOS = ['Accidente', 'Incidente', 'Enfermedad Laboral'];
 
 export default function SSO() {
   const { toasts, addToast, removeToast } = useToast();
@@ -14,9 +15,12 @@ export default function SSO() {
     proyecto_codigo_correlativo: '',
     incidente_sso_descripcion: '',
     incidente_sso_gravedad: 'leve',
+    incidente_sso_tipo: '',
+    incidente_sso_lugar: '',
     incidente_sso_fecha_hora: new Date().toISOString().slice(0, 16)
   });
   const [involucrados, setInvolucrados] = useState([]);
+  const [fotos, setFotos] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -46,20 +50,22 @@ export default function SSO() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (!form.proyecto_codigo_correlativo || !form.incidente_sso_descripcion || !form.incidente_sso_gravedad) {
-      addToast('Completa todos los campos requeridos', 'error'); return;
+    if (!form.proyecto_codigo_correlativo || !form.incidente_sso_descripcion || !form.incidente_sso_gravedad || !form.incidente_sso_tipo) {
+      addToast('Proyecto, tipo de incidente, descripción y gravedad son obligatorios', 'error'); return;
     }
 
     const data = new FormData();
     Object.entries(form).forEach(([k, v]) => data.append(k, v));
     data.append('trabajadores_involucrados', JSON.stringify(involucrados));
+    fotos.forEach(f => data.append('fotos', f));
 
     setLoading(true);
     try {
       const res = await api.post('/sso/incidente', data, { headers: { 'Content-Type': 'multipart/form-data' } });
       addToast(`Incidente SSO registrado. Folio #${res.data.data.incidente_sso_id}`, 'success');
-      setForm(f => ({ ...f, incidente_sso_descripcion: '', incidente_sso_gravedad: 'leve', proyecto_codigo_correlativo: '' }));
+      setForm(f => ({ ...f, incidente_sso_descripcion: '', incidente_sso_gravedad: 'leve', incidente_sso_tipo: '', incidente_sso_lugar: '', proyecto_codigo_correlativo: '' }));
       setInvolucrados([]);
+      setFotos([]);
     } catch (err) {
       addToast(err.response?.data?.error || 'Error al registrar incidente', 'error');
     } finally {
@@ -94,7 +100,23 @@ export default function SSO() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Gravedad</label>
+              <label className="form-label">Tipo de Incidente *</label>
+              <select
+                className="form-select"
+                value={form.incidente_sso_tipo}
+                onChange={e => setForm(f => ({ ...f, incidente_sso_tipo: e.target.value }))}
+              >
+                <option value="">Selecciona...</option>
+                {TIPOS.map(t => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div className="form-group">
+              <label className="form-label">Gravedad *</label>
               <select
                 className="form-select"
                 value={form.incidente_sso_gravedad}
@@ -103,6 +125,24 @@ export default function SSO() {
                 {GRAVEDADES.map(g => (
                   <option key={g} value={g}>{g.charAt(0).toUpperCase() + g.slice(1)}</option>
                 ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Lugar dentro de la Obra</label>
+              <select
+                className="form-select"
+                value={form.incidente_sso_lugar}
+                onChange={e => setForm(f => ({ ...f, incidente_sso_lugar: e.target.value }))}
+              >
+                <option value="No asignado">No asignado</option>
+                <option value="Sala de máquinas">Sala de máquinas</option>
+                <option value="Techo / Cubierta">Techo / Cubierta</option>
+                <option value="Área de ductos">Área de ductos</option>
+                <option value="Bodega">Bodega</option>
+                <option value="Acceso / Pasillo">Acceso / Pasillo</option>
+                <option value="Exterior obra">Exterior obra</option>
+                <option value="Otro">Otro</option>
               </select>
             </div>
           </div>
@@ -176,6 +216,65 @@ export default function SSO() {
                 </button>
               </div>
             ))}
+          </div>
+
+          {/* Adjuntar fotos */}
+          <div style={{ marginBottom: 16 }}>
+            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Camera size={14} />
+              Fotos del Incidente (opcional, máx. 10)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              style={{ display: 'none' }}
+              id="sso-fotos-input"
+              onChange={e => {
+                const nuevas = Array.from(e.target.files);
+                setFotos(prev => [...prev, ...nuevas].slice(0, 10));
+                e.target.value = '';
+              }}
+            />
+            <label
+              htmlFor="sso-fotos-input"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                cursor: 'pointer', padding: '8px 14px',
+                border: '1px dashed var(--color-border)',
+                borderRadius: 4, fontSize: 13, color: 'var(--color-text-muted)',
+                background: 'var(--color-bg-elevated)', marginBottom: fotos.length ? 10 : 0
+              }}
+            >
+              <Camera size={15} />
+              Seleccionar fotos
+            </label>
+
+            {fotos.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {fotos.map((f, i) => (
+                  <div key={i} style={{ position: 'relative' }}>
+                    <img
+                      src={URL.createObjectURL(f)}
+                      alt=""
+                      style={{ width: 72, height: 72, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--color-border)' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setFotos(prev => prev.filter((_, j) => j !== i))}
+                      style={{
+                        position: 'absolute', top: -6, right: -6,
+                        background: 'var(--color-danger)', border: 'none',
+                        borderRadius: '50%', width: 18, height: 18,
+                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0
+                      }}
+                    >
+                      <X size={10} color="#fff" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <button type="submit" className="btn btn-primary" disabled={loading}>

@@ -4,7 +4,7 @@ import {
   BookOpen, DollarSign, AlertTriangle, Camera, CheckSquare,
   ShoppingCart, FileText, BarChart2, LogOut, Menu, X,
   MessageSquare, Package, Award, Users, Briefcase, Image,
-  Search, TrendingUp, Shield, Settings
+  Search, TrendingUp, Shield, Settings, ChevronDown, ChevronRight
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 
@@ -19,37 +19,98 @@ const NAV_ITEMS = [
 ];
 
 const ADMIN_ITEMS = [
-  { to: '/validar',            icon: CheckSquare,  label: 'Validar Evidencias' },
-  { to: '/orden-compra',       icon: ShoppingCart, label: 'Órdenes de Compra' },
-  { to: '/vincular-factura',   icon: FileText,     label: 'Vincular Facturas' },
-  { to: '/control-costos',     icon: BarChart2,    label: 'Control de Costos' },
-  { to: '/subcontratistas',    icon: Users,        label: 'Subcontratistas' },
-  { to: '/mano-obra',          icon: Briefcase,    label: 'Mano de Obra' },
-  { to: '/portafolio',         icon: Image,        label: 'Portafolio de Obras' },
-  { to: '/documentos',         icon: Search,       label: 'Buscador Documentos' },
-  { to: '/control-presupuesto',icon: TrendingUp,   label: 'Control Presupuesto' },
-  { to: '/polizas',            icon: Shield,       label: 'Pólizas de Seguro' },
-  { to: '/configuracion',      icon: Settings,     label: 'Configuración' }
+  { to: '/validar',             icon: CheckSquare,  label: 'Revisiones Pendientes' },
+  { to: '/orden-compra',        icon: ShoppingCart, label: 'Órdenes de Compra' },
+  { to: '/vincular-factura',    icon: FileText,     label: 'Vincular Facturas' },
+  { to: '/control-costos',      icon: BarChart2,    label: 'Control de Costos' },
+  { to: '/subcontratistas',     icon: Users,        label: 'Subcontratistas' },
+  { to: '/mano-obra',           icon: Briefcase,    label: 'Mano de Obra' },
+  { to: '/portafolio',          icon: Image,        label: 'Portafolio de Obras' },
+  { to: '/documentos',          icon: Search,       label: 'Buscador Documentos' },
+  { to: '/control-presupuesto', icon: TrendingUp,   label: 'Control Presupuesto' },
+  { to: '/polizas',             icon: Shield,       label: 'Pólizas de Seguro' },
+  { to: '/configuracion',       icon: Settings,     label: 'Configuración' }
 ];
 
-const navStyle = (isActive) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-  padding: '10px 20px',
-  color: isActive ? '#E6EDF3' : '#8B949E',
-  background: isActive ? 'var(--color-bg-elevated)' : 'transparent',
-  borderLeft: isActive ? '3px solid var(--color-blue)' : '3px solid transparent',
-  textDecoration: 'none',
-  fontSize: 14,
-  fontWeight: 500,
-  transition: 'all 0.15s'
-});
+function NavItem({ to, icon: Icon, label, onClick }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <NavLink
+      to={to}
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={({ isActive }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: '8px 14px 8px 16px',
+        marginInline: 8,
+        borderRadius: 7,
+        color: isActive ? '#E8EFFE' : hovered ? '#C8D8F0' : '#8B9FBB',
+        background: isActive
+          ? 'linear-gradient(90deg, rgba(37,99,235,0.20) 0%, rgba(37,99,235,0.05) 100%)'
+          : hovered ? 'rgba(30,46,74,0.7)' : 'transparent',
+        borderLeft: isActive ? '2px solid #2563EB' : '2px solid transparent',
+        textDecoration: 'none',
+        fontSize: 13.5,
+        fontWeight: isActive ? 600 : 400,
+        transition: 'background 0.15s, color 0.15s',
+        userSelect: 'none',
+      })}
+    >
+      <Icon size={15} strokeWidth={1.8} style={{ flexShrink: 0 }} />
+      <span style={{ flex: 1 }}>{label}</span>
+    </NavLink>
+  );
+}
+
+function Section({ label, open, onToggle, children }) {
+  return (
+    <div>
+      <button
+        onClick={onToggle}
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '10px 20px 5px',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          color: '#4B5E78',
+        }}
+      >
+        <span style={{
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+        }}>
+          {label}
+        </span>
+        {open
+          ? <ChevronDown size={12} strokeWidth={2.5} />
+          : <ChevronRight size={12} strokeWidth={2.5} />
+        }
+      </button>
+      {open && (
+        <div style={{ paddingBottom: 4 }}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [operOpen, setOperOpen] = useState(true);
+  const [adminOpen, setAdminOpen] = useState(true);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -57,129 +118,114 @@ export default function Sidebar() {
     navigate('/login');
   };
 
+  const initials = (usuario.nombre || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  const rolLabel = usuario.rol === 'admin' ? 'Administrador' : 'Supervisor';
+
   const sidebarContent = (
     <div style={{
-      width: 240,
-      minHeight: '100vh',
-      background: '#0D1117',
-      borderRight: '1px solid var(--color-border)',
+      width: 252,
+      height: '100vh',
+      background: 'linear-gradient(180deg, #0C1322 0%, #080E1A 100%)',
+      borderRight: '1px solid #1A2840',
       display: 'flex',
       flexDirection: 'column',
-      flexShrink: 0
+      flexShrink: 0,
     }}>
-      {/* Logo */}
-      <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid var(--color-border)' }}>
-        <img src={logo} alt="ATI Termic" style={{ maxWidth: 160, display: 'block' }} />
+
+      {/* LOGO */}
+      <div style={{ padding: '18px 20px 16px', borderBottom: '1px solid #1A2840' }}>
+        <div style={{
+          background: '#ffffff',
+          borderRadius: 8,
+          padding: '8px 14px',
+          display: 'inline-block',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.5)',
+        }}>
+          <img src={logo} alt="ATI Termic" style={{ maxWidth: 148, height: 'auto', display: 'block' }} />
+        </div>
       </div>
 
-      {/* Nav */}
-      <nav style={{ flex: 1, padding: '16px 0', overflowY: 'auto' }}>
-        {/* Sección general */}
-        <div style={{
-          padding: '0 20px 6px',
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: 'var(--color-text-muted)'
-        }}>
-          Operaciones
-        </div>
-        {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} onClick={() => setMobileOpen(false)}
-            style={({ isActive }) => navStyle(isActive)}>
-            <Icon size={16} />
-            {label}
-          </NavLink>
-        ))}
+      {/* NAV */}
+      <nav style={{ flex: 1, paddingTop: 8, paddingBottom: 8, overflowY: 'auto' }}>
+        <Section label="Operaciones" open={operOpen} onToggle={() => setOperOpen(v => !v)}>
+          {NAV_ITEMS.map(item => (
+            <NavItem key={item.to} {...item} onClick={() => setMobileOpen(false)} />
+          ))}
+        </Section>
 
-        {/* Sección administración */}
         {usuario.rol === 'admin' && (
           <>
-            <div style={{
-              padding: '16px 20px 6px',
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-muted)'
-            }}>
-              Administración
-            </div>
-            {ADMIN_ITEMS.map(({ to, icon: Icon, label }) => (
-              <NavLink key={to} to={to} onClick={() => setMobileOpen(false)}
-                style={({ isActive }) => navStyle(isActive)}>
-                <Icon size={16} />
-                {label}
-              </NavLink>
-            ))}
+            <div style={{ height: 1, background: '#1A2840', margin: '6px 16px' }} />
+            <Section label="Administración" open={adminOpen} onToggle={() => setAdminOpen(v => !v)}>
+              {ADMIN_ITEMS.map(item => (
+                <NavItem key={item.to} {...item} onClick={() => setMobileOpen(false)} />
+              ))}
+            </Section>
           </>
         )}
       </nav>
 
-      {/* User */}
-      <div style={{ borderTop: '1px solid var(--color-border)', padding: '16px 20px' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: 2 }}>
-          {usuario.nombre || 'Usuario'}
+      {/* USER */}
+      <div style={{
+        borderTop: '1px solid #1A2840',
+        padding: '14px 16px',
+        background: 'rgba(6,11,20,0.5)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+            background: 'linear-gradient(135deg, #2563EB 0%, #5DB835 100%)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: 0.5,
+          }}>
+            {initials}
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#E8EFFE', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {usuario.nombre || 'Usuario'}
+            </div>
+            <div style={{ fontSize: 11, color: '#5DB835', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+              {rolLabel}
+            </div>
+          </div>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 12 }}>
-          {usuario.rol === 'admin' ? 'Administrador' : 'Supervisor'}
-        </div>
-        <button onClick={handleLogout} className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center', fontSize: 13 }}>
-          <LogOut size={14} />
-          Cerrar sesión
-        </button>
+
+        <LogoutBtn onClick={handleLogout} />
       </div>
     </div>
   );
 
   return (
     <>
-      {/* Desktop sidebar */}
       <div className="sidebar-desktop" style={{ display: 'flex' }}>
         {sidebarContent}
       </div>
 
-      {/* Mobile hamburger */}
       <button
         className="hamburger-btn"
         onClick={() => setMobileOpen(true)}
         style={{
-          display: 'none',
-          position: 'fixed',
-          top: 12,
-          left: 12,
-          zIndex: 100,
-          background: 'var(--color-bg-elevated)',
-          border: '1px solid var(--color-border)',
-          borderRadius: 4,
-          padding: '6px 8px',
-          cursor: 'pointer',
-          color: 'var(--color-text-primary)'
+          display: 'none', position: 'fixed', top: 12, left: 12, zIndex: 100,
+          background: '#0C1322', border: '1px solid #1A2840',
+          borderRadius: 7, padding: '7px 9px', cursor: 'pointer', color: '#E8EFFE',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
         }}
       >
         <Menu size={20} />
       </button>
 
-      {/* Mobile drawer */}
       {mobileOpen && (
         <>
-          <div
-            onClick={() => setMobileOpen(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 200 }}
+          <div onClick={() => setMobileOpen(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, backdropFilter: 'blur(2px)' }}
           />
           <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 300, animation: 'slideRight 0.2s ease' }}>
             {sidebarContent}
-            <button
-              onClick={() => setMobileOpen(false)}
-              style={{
-                position: 'absolute', top: 12, right: -40,
-                background: 'var(--color-bg-elevated)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 4, padding: '4px 6px',
-                cursor: 'pointer', color: 'var(--color-text-primary)'
-              }}
-            >
+            <button onClick={() => setMobileOpen(false)} style={{
+              position: 'absolute', top: 14, right: -44,
+              background: '#0C1322', border: '1px solid #1A2840',
+              borderRadius: 7, padding: '5px 7px', cursor: 'pointer', color: '#E8EFFE',
+            }}>
               <X size={18} />
             </button>
           </div>
@@ -191,8 +237,38 @@ export default function Sidebar() {
           .sidebar-desktop { display: none !important; }
           .hamburger-btn { display: flex !important; }
         }
-        @keyframes slideRight { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+        @keyframes slideRight {
+          from { transform: translateX(-100%); opacity: 0; }
+          to   { transform: translateX(0);    opacity: 1; }
+        }
       `}</style>
     </>
+  );
+}
+
+function LogoutBtn({ onClick }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: '100%',
+        display: 'flex', alignItems: 'center', gap: 8,
+        padding: '8px 12px',
+        background: hovered ? 'rgba(239,68,68,0.08)' : 'transparent',
+        border: hovered ? '1px solid rgba(239,68,68,0.3)' : '1px solid #1A2840',
+        borderRadius: 7,
+        color: hovered ? '#EF4444' : '#7D8FA8',
+        fontSize: 13, fontWeight: 500,
+        cursor: 'pointer',
+        transition: 'all 0.15s',
+        justifyContent: 'center',
+      }}
+    >
+      <LogOut size={14} />
+      Cerrar sesión
+    </button>
   );
 }

@@ -34,25 +34,34 @@ export default function Login() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#0D1117',
+      background: 'linear-gradient(135deg, #060B14 0%, #0C1322 100%)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: 16
     }}>
       <div style={{
-        background: '#161B22',
-        border: '1px solid var(--color-border)',
-        borderRadius: 6,
-        padding: '40px',
+        background: '#0C1322',
+        border: '1px solid #1A2840',
+        borderRadius: 12,
+        padding: '36px 40px 40px',
         width: '100%',
-        maxWidth: 420
+        maxWidth: 420,
+        boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
       }}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <img src={logo} alt="ATI Termic" style={{ maxWidth: 180, display: 'block', margin: '0 auto 20px' }} />
-          <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 20 }} />
-          <h1 style={{ fontSize: 20, letterSpacing: '0.05em', color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)' }}>
-            INICIAR SESION
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          <div style={{
+            background: '#ffffff',
+            borderRadius: 10,
+            padding: '10px 20px',
+            display: 'inline-block',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+            marginBottom: 24,
+          }}>
+            <img src={logo} alt="ATI Termic" style={{ maxWidth: 180, height: 'auto', display: 'block' }} />
+          </div>
+          <h1 style={{ fontSize: 18, letterSpacing: '0.08em', color: 'var(--color-text-primary)', fontFamily: 'var(--font-display)', fontWeight: 700 }}>
+            INICIAR SESIÓN
           </h1>
         </div>
 

@@ -8,7 +8,7 @@ const SolicitudMaterial = sequelize.define('SolicitudMaterial', {
   solicitud_material_estado: { type: DataTypes.STRING(50), allowNull: false, defaultValue: 'pendiente' },
   solicitud_material_fecha: { type: DataTypes.DATEONLY, allowNull: false },
   proyecto_codigo_correlativo: { type: DataTypes.STRING(50), allowNull: false },
-  usuario_rut: { type: DataTypes.STRING(20), allowNull: false }
+  usuario_rut: { type: DataTypes.STRING(20), allowNull: true }
 }, {
   tableName: 'SOLICITUD_MATERIAL',
   timestamps: false

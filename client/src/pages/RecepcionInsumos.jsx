@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Package, CheckCircle2, AlertTriangle, Navigation } from 'lucide-react';
+import { MapPin, Package, CheckCircle2, AlertTriangle, Navigation, XCircle } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
@@ -11,6 +11,7 @@ export default function RecepcionInsumos() {
   const [confirmando, setConfirmando] = useState(null);
   const [coordsObra, setCoordsObra] = useState({ lat: '', lon: '' });
   const [obteniendo, setObteniendo] = useState(false);
+  const [resultado, setResultado] = useState(null); // { guia, distancia, verificada }
 
   useEffect(() => {
     cargarGuias();
@@ -26,6 +27,7 @@ export default function RecepcionInsumos() {
 
   const iniciarConfirmacion = guia => {
     setConfirmando(guia);
+    setResultado(null);
     setCoordsObra({ lat: '', lon: '' });
   };
 
@@ -45,7 +47,7 @@ export default function RecepcionInsumos() {
     navigator.geolocation.getCurrentPosition(
       pos => {
         setObteniendo(false);
-        enviarRecepcion(confirmando.guia_despacho_id, pos.coords.latitude, pos.coords.longitude);
+        enviarRecepcion(confirmando, pos.coords.latitude, pos.coords.longitude);
       },
       err => {
         setObteniendo(false);
@@ -56,16 +58,17 @@ export default function RecepcionInsumos() {
     );
   };
 
-  const enviarRecepcion = async (id, latSupervisor, lonSupervisor) => {
+  const enviarRecepcion = async (guia, latSupervisor, lonSupervisor) => {
     try {
-      const r = await api.post(`/recepcion/${id}/confirmar`, {
+      const r = await api.post(`/recepcion/${guia.guia_despacho_id}/confirmar`, {
         latitud_supervisor: latSupervisor,
         longitud_supervisor: lonSupervisor,
         latitud_obra: parseFloat(coordsObra.lat),
         longitud_obra: parseFloat(coordsObra.lon)
       });
-      addToast(`Recepción confirmada — distancia verificada: ${r.data.data.distancia_metros}m`, 'success');
-      cancelarConfirmacion();
+      const data = r.data.data;
+      setResultado({ guia, distancia: data.distancia_metros, verificada: data.ubicacion_verificada, fueraDeRango: data.fuera_de_rango });
+      setConfirmando(null);
       cargarGuias();
     } catch (err) {
       addToast(err.response?.data?.error || 'Error al confirmar recepción', 'error');
@@ -81,12 +84,66 @@ export default function RecepcionInsumos() {
 
       <p style={{ color: 'var(--color-text-secondary)', fontSize: 13, marginBottom: 24, maxWidth: 600 }}>
         Confirma la recepción de insumos desde el sitio de la obra. El sistema verifica que tu ubicación GPS
-        esté dentro de los 500m del radio de la obra antes de registrar.
+        esté dentro de los 500m del radio de la obra.
       </p>
+
+      {/* Panel de resultado */}
+      {resultado && (
+        <div style={{
+          maxWidth: 700, marginBottom: 20, borderRadius: 8,
+          border: `2px solid ${resultado.verificada ? 'var(--color-green)' : 'var(--color-warning)'}`,
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            background: resultado.verificada ? 'rgba(34,197,94,0.08)' : 'rgba(212,147,10,0.08)',
+            padding: '16px 20px',
+            display: 'flex', alignItems: 'flex-start', gap: 14
+          }}>
+            {resultado.verificada
+              ? <CheckCircle2 size={22} color="var(--color-green)" style={{ flexShrink: 0, marginTop: 1 }} />
+              : <AlertTriangle size={22} color="var(--color-warning)" style={{ flexShrink: 0, marginTop: 1 }} />
+            }
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4,
+                color: resultado.verificada ? 'var(--color-green)' : 'var(--color-warning)' }}>
+                {resultado.verificada
+                  ? 'Recepción confirmada — Ubicación Verificada'
+                  : 'Excepción 1: Fuera de rango — Recepción guardada sin verificación de ubicación'}
+              </div>
+              <div style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
+                Guía N° {resultado.guia.guia_despacho_numero} · Distancia registrada: <strong>{resultado.distancia}m</strong>
+                {resultado.fueraDeRango && ` (máx. permitido: 500m)`}
+              </div>
+              {resultado.fueraDeRango && (
+                <div style={{ fontSize: 12, marginTop: 8, color: 'var(--color-text-muted)' }}>
+                  La recepción fue guardada con el estado "Recibido" pero <strong>sin</strong> la etiqueta de Ubicación Verificada,
+                  ya que el supervisor se encontraba fuera del radio de 500m de la obra.
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => setResultado(null)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)', padding: 4 }}
+            >
+              <XCircle size={16} />
+            </button>
+          </div>
+          {resultado.verificada && (
+            <div style={{
+              background: 'rgba(34,197,94,0.04)', padding: '10px 20px',
+              borderTop: '1px solid var(--color-border)',
+              display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--color-green)'
+            }}>
+              <CheckCircle2 size={13} />
+              Este registro ha sido guardado con la etiqueta <strong>Ubicación Verificada</strong>
+            </div>
+          )}
+        </div>
+      )}
 
       {loading && <p style={{ color: 'var(--color-text-muted)', fontSize: 13 }}>Cargando guías pendientes...</p>}
 
-      {!loading && guias.length === 0 && (
+      {!loading && guias.length === 0 && !resultado && (
         <div className="card" style={{ maxWidth: 500, textAlign: 'center', padding: 40 }}>
           <CheckCircle2 size={32} color="var(--color-green)" style={{ marginBottom: 12 }} />
           <p style={{ fontWeight: 600, marginBottom: 4 }}>Todo al día</p>
@@ -126,19 +183,15 @@ export default function RecepcionInsumos() {
             {confirmando?.guia_despacho_id === g.guia_despacho_id && (
               <div style={{ borderTop: '1px solid var(--color-border)', padding: 20 }}>
                 <div style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 10,
+                  display: 'flex', alignItems: 'flex-start', gap: 10,
                   background: 'rgba(212, 147, 10, 0.08)',
                   border: '1px solid var(--color-warning)',
-                  borderRadius: 4,
-                  padding: '10px 14px',
-                  marginBottom: 16,
-                  fontSize: 12,
-                  color: 'var(--color-warning)'
+                  borderRadius: 4, padding: '10px 14px', marginBottom: 16,
+                  fontSize: 12, color: 'var(--color-warning)'
                 }}>
                   <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
-                  Debes estar dentro de 500m del sitio de la obra para confirmar la recepción.
+                  El sistema verificará que estés dentro de 500m del sitio de la obra.
+                  Si estás fuera de rango, la recepción igual se guardará pero sin la etiqueta de ubicación verificada.
                 </div>
 
                 <p style={{ fontSize: 12, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>
@@ -176,7 +229,7 @@ export default function RecepcionInsumos() {
                     disabled={obteniendo || !coordsObra.lat || !coordsObra.lon}
                   >
                     <Navigation size={14} />
-                    {obteniendo ? 'Obteniendo GPS...' : 'Confirmar con GPS'}
+                    {obteniendo ? 'Obteniendo GPS...' : 'Confirmar Recepción Final'}
                   </button>
                   <button className="btn btn-secondary" onClick={cancelarConfirmacion}>
                     Cancelar

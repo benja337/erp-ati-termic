@@ -61,13 +61,16 @@ async function getGastosReales(req, res) {
 async function getGastosPorMes(req, res) {
   try {
     const { codigo } = req.params;
+    const { year } = req.query;
 
     const proyecto = await Proyecto.findByPk(codigo);
     if (!proyecto) {
       return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
     }
 
-    // Obtiene gastos reales agrupados por mes (últimos 12 meses)
+    const anio = parseInt(year) || new Date().getFullYear();
+
+    // Obtiene gastos reales agrupados por mes del año seleccionado
     const gastosMensuales = await sequelize.query(`
       SELECT
         DATE_FORMAT(f.factura_fecha, '%Y-%m') AS mes,
@@ -75,18 +78,17 @@ async function getGastosPorMes(req, res) {
       FROM FACTURA f
       INNER JOIN ORDEN_COMPRA oc ON f.orden_compra_id = oc.orden_compra_id
       WHERE oc.proyecto_codigo_correlativo = :codigo
-        AND f.factura_fecha >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+        AND YEAR(f.factura_fecha) = :anio
       GROUP BY mes
       ORDER BY mes ASC
-    `, { replacements: { codigo }, type: sequelize.QueryTypes.SELECT });
+    `, { replacements: { codigo, anio }, type: sequelize.QueryTypes.SELECT });
 
     const presupuesto = parseFloat(proyecto.proyecto_presupuesto_asignado) || 0;
 
-    // Construye serie de 12 meses hacia atrás desde hoy
-    const ahora = new Date();
+    // Construye serie de los 12 meses del año seleccionado
     const meses = [];
-    for (let i = 11; i >= 0; i--) {
-      const d = new Date(ahora.getFullYear(), ahora.getMonth() - i, 1);
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(anio, i, 1);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
       const label = d.toLocaleDateString('es-CL', { month: 'short', year: '2-digit' });
       const encontrado = gastosMensuales.find(g => g.mes === key);

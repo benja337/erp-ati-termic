@@ -119,12 +119,149 @@ sequelize.authenticate()
       { tabla: 'PROYECTO',   columna: 'proveedor_rut',              tipo: { type: DataTypes.STRING(20),  allowNull: true } },
       { tabla: 'TRABAJADOR', columna: 'proyecto_codigo_correlativo', tipo: { type: DataTypes.STRING(50),  allowNull: true } },
       { tabla: 'CONTRATO_LABORAL', columna: 'proyecto_codigo_correlativo', tipo: { type: DataTypes.STRING(50), allowNull: true } },
+      { tabla: 'INCIDENTE_SSO', columna: 'incidente_sso_url_fotos', tipo: { type: DataTypes.TEXT, allowNull: true } },
+      { tabla: 'INCIDENTE_SSO', columna: 'incidente_sso_tipo', tipo: { type: DataTypes.STRING(50), allowNull: true } },
+      { tabla: 'INCIDENTE_SSO', columna: 'incidente_sso_lugar', tipo: { type: DataTypes.STRING(255), allowNull: true } },
+      { tabla: 'PROYECTO', columna: 'proyecto_descripcion_tecnica', tipo: { type: DataTypes.TEXT, allowNull: true } },
+      { tabla: 'PROYECTO', columna: 'proyecto_ubicacion', tipo: { type: DataTypes.STRING(255), allowNull: true } },
     ];
     for (const m of migraciones) {
       try {
         await qi.addColumn(m.tabla, m.columna, m.tipo);
         console.log(`Columna ${m.tabla}.${m.columna} agregada.`);
       } catch (_) { /* ya existe, ignorar */ }
+    }
+
+    // Quitar FKs que bloquean inserts y hacer columnas nullable
+    const fkMigs = [
+      "ALTER TABLE LOG_AUDITORIA DROP FOREIGN KEY fk_log_usuario",
+      "ALTER TABLE LOG_AUDITORIA MODIFY usuario_rut VARCHAR(20) NULL",
+      "ALTER TABLE SOLICITUD_MATERIAL DROP FOREIGN KEY fk_sm_usuario",
+      "ALTER TABLE SOLICITUD_MATERIAL MODIFY usuario_rut VARCHAR(20) NULL",
+    ];
+    for (const sql of fkMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ignorar si ya no existe */ }
+    }
+
+    // Arreglar tabla SOLICITUD_MATERIAL: schema tiene columnas distintas al modelo
+    const smMigs = [
+      "ALTER TABLE SOLICITUD_MATERIAL MODIFY solicitud_material_fecha_emision DATE NULL",
+      "ALTER TABLE SOLICITUD_MATERIAL MODIFY solicitud_material_cantidad_pedida DECIMAL(15,2) NULL",
+      "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN solicitud_material_descripcion TEXT NULL",
+      "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN solicitud_material_cantidad INT NULL",
+      "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN solicitud_material_estado VARCHAR(50) NULL DEFAULT 'pendiente'",
+      "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN solicitud_material_fecha DATE NULL",
+      "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN proyecto_codigo_correlativo VARCHAR(50) NULL",
+      "ALTER TABLE SOLICITUD_MATERIAL ADD COLUMN usuario_rut VARCHAR(20) NULL",
+    ];
+    for (const sql of smMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ya existe, ignorar */ }
+    }
+
+    // Arreglar tabla GUIA_DESPACHO: columnas distintas al modelo
+    const gdMigs = [
+      "ALTER TABLE GUIA_DESPACHO DROP FOREIGN KEY fk_guia_proveedor",
+      "ALTER TABLE GUIA_DESPACHO MODIFY guia_despacho_folio VARCHAR(50) NULL",
+      "ALTER TABLE GUIA_DESPACHO MODIFY guia_despacho_fecha_emision DATE NULL",
+      "ALTER TABLE GUIA_DESPACHO MODIFY guia_despacho_transportista VARCHAR(150) NULL",
+      "ALTER TABLE GUIA_DESPACHO MODIFY proveedor_rut VARCHAR(20) NULL",
+      "ALTER TABLE GUIA_DESPACHO ADD COLUMN guia_despacho_numero VARCHAR(50) NULL",
+      "ALTER TABLE GUIA_DESPACHO ADD COLUMN guia_despacho_fecha DATE NULL",
+      "ALTER TABLE GUIA_DESPACHO ADD COLUMN guia_despacho_ubicacion_verificada TINYINT(1) NULL DEFAULT 0",
+      "ALTER TABLE GUIA_DESPACHO ADD COLUMN guia_despacho_latitud_recepcion DECIMAL(10,7) NULL",
+      "ALTER TABLE GUIA_DESPACHO ADD COLUMN guia_despacho_longitud_recepcion DECIMAL(10,7) NULL",
+      "ALTER TABLE GUIA_DESPACHO ADD COLUMN orden_compra_id INT NULL",
+    ];
+    for (const sql of gdMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
+    }
+
+    // Arreglar tabla ORDEN_COMPRA: columnas distintas al modelo
+    const ocMigs = [
+      "ALTER TABLE ORDEN_COMPRA DROP FOREIGN KEY fk_oc_proyecto",
+      "ALTER TABLE ORDEN_COMPRA DROP FOREIGN KEY fk_oc_proveedor",
+      "ALTER TABLE ORDEN_COMPRA MODIFY orden_compra_fecha_generacion DATE NULL",
+      "ALTER TABLE ORDEN_COMPRA MODIFY orden_compra_fecha_entrega_pactada DATE NULL",
+      "ALTER TABLE ORDEN_COMPRA ADD COLUMN orden_compra_fecha DATE NULL",
+      "ALTER TABLE ORDEN_COMPRA ADD COLUMN solicitud_material_id INT NULL",
+    ];
+    for (const sql of ocMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
+    }
+
+    // Arreglar tabla DETALLE_ORDEN_COMPRA: estructura completamente distinta al modelo
+    const docMigs = [
+      "ALTER TABLE DETALLE_ORDEN_COMPRA DROP FOREIGN KEY fk_doc_orden",
+      "ALTER TABLE DETALLE_ORDEN_COMPRA DROP FOREIGN KEY fk_doc_material",
+      "ALTER TABLE DETALLE_ORDEN_COMPRA DROP PRIMARY KEY",
+      "ALTER TABLE DETALLE_ORDEN_COMPRA MODIFY material_id INT NULL",
+      "ALTER TABLE DETALLE_ORDEN_COMPRA MODIFY detalle_cantidad_pedida DECIMAL(15,2) NULL",
+      "ALTER TABLE DETALLE_ORDEN_COMPRA MODIFY detalle_precio_unitario DECIMAL(15,2) NULL",
+      "ALTER TABLE DETALLE_ORDEN_COMPRA ADD COLUMN detalle_orden_compra_id INT AUTO_INCREMENT PRIMARY KEY FIRST",
+      "ALTER TABLE DETALLE_ORDEN_COMPRA ADD COLUMN detalle_orden_compra_descripcion_material VARCHAR(255) NULL",
+      "ALTER TABLE DETALLE_ORDEN_COMPRA ADD COLUMN detalle_orden_compra_cantidad INT NULL",
+      "ALTER TABLE DETALLE_ORDEN_COMPRA ADD COLUMN detalle_orden_compra_precio_unitario DECIMAL(15,2) NULL",
+    ];
+    for (const sql of docMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
+    }
+
+    // Arreglar tabla FACTURA
+    const facMigs = [
+      "ALTER TABLE FACTURA DROP FOREIGN KEY fk_factura_orden",
+      "ALTER TABLE FACTURA MODIFY factura_proveedor_folio VARCHAR(50) NULL",
+      "ALTER TABLE FACTURA MODIFY factura_proveedor_fecha_facturacion DATE NULL",
+      "ALTER TABLE FACTURA MODIFY factura_proveedor_monto_total DECIMAL(15,2) NULL",
+      "ALTER TABLE FACTURA ADD COLUMN factura_folio VARCHAR(50) NULL",
+      "ALTER TABLE FACTURA ADD COLUMN factura_fecha DATE NULL",
+      "ALTER TABLE FACTURA ADD COLUMN factura_monto_total DECIMAL(15,2) NULL",
+      "ALTER TABLE FACTURA ADD COLUMN factura_url_pdf TEXT NULL",
+    ];
+    for (const sql of facMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
+    }
+
+    // Arreglar tabla CONTRATO_LABORAL
+    const clMigs = [
+      "ALTER TABLE CONTRATO_LABORAL DROP FOREIGN KEY fk_contrato_trabajador",
+      "ALTER TABLE CONTRATO_LABORAL MODIFY contrato_laboral_fecha_termino DATE NULL",
+      "ALTER TABLE CONTRATO_LABORAL ADD COLUMN contrato_laboral_sueldo_base DECIMAL(15,2) NULL",
+      "ALTER TABLE CONTRATO_LABORAL ADD COLUMN contrato_laboral_leyes_sociales DECIMAL(15,2) NULL DEFAULT 0",
+      "ALTER TABLE CONTRATO_LABORAL ADD COLUMN proyecto_codigo_correlativo VARCHAR(50) NULL",
+    ];
+    for (const sql of clMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
+    }
+
+    // Arreglar tabla DOCUMENTO_LEGAL
+    const dlMigs = [
+      "ALTER TABLE DOCUMENTO_LEGAL DROP FOREIGN KEY fk_documento_trabajador",
+      "ALTER TABLE DOCUMENTO_LEGAL MODIFY documento_legal_tipo_documento VARCHAR(100) NULL",
+      "ALTER TABLE DOCUMENTO_LEGAL MODIFY trabajador_rut VARCHAR(20) NULL",
+      "ALTER TABLE DOCUMENTO_LEGAL ADD COLUMN documento_legal_tipo VARCHAR(100) NULL",
+      "ALTER TABLE DOCUMENTO_LEGAL ADD COLUMN documento_legal_estado VARCHAR(50) NULL",
+      "ALTER TABLE DOCUMENTO_LEGAL ADD COLUMN documento_legal_fecha_emision DATE NULL",
+      "ALTER TABLE DOCUMENTO_LEGAL ADD COLUMN documento_legal_fecha_vencimiento DATE NULL",
+      "ALTER TABLE DOCUMENTO_LEGAL ADD COLUMN documento_legal_url_pdf TEXT NULL",
+      "ALTER TABLE DOCUMENTO_LEGAL ADD COLUMN proyecto_codigo_correlativo VARCHAR(50) NULL",
+    ];
+    for (const sql of dlMigs) {
+      try { await sequelize.query(sql); } catch (_) { /* ignorar */ }
+    }
+
+    // Arreglar tabla PROVEEDOR: schema.sql tiene columnas distintas a las del modelo
+    const rawMigs = [
+      "ALTER TABLE PROVEEDOR MODIFY proveedor_giro TEXT NULL",
+      "ALTER TABLE PROVEEDOR MODIFY proveedor_contacto VARCHAR(150) NULL",
+      "ALTER TABLE PROVEEDOR ADD COLUMN proveedor_razon_social TEXT NULL",
+      "ALTER TABLE PROVEEDOR ADD COLUMN proveedor_correo VARCHAR(150) NULL",
+      "ALTER TABLE PROVEEDOR ADD COLUMN proveedor_telefono VARCHAR(20) NULL",
+    ];
+    for (const sql of rawMigs) {
+      try {
+        await sequelize.query(sql);
+        console.log(`SQL OK: ${sql.substring(0, 60)}`);
+      } catch (e) { console.log(`SQL skip: ${e.message.substring(0, 80)}`); }
     }
   })
   .then(() => {

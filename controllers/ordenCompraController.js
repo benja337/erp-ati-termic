@@ -53,7 +53,7 @@ async function generarOrdenCompra(req, res) {
     const ordenCompra = await OrdenCompra.create({
       orden_compra_folio: folio,
       orden_compra_fecha: new Date().toISOString().split('T')[0],
-      orden_compra_estado: 'Pendiente',
+      orden_compra_estado: 'Emitida',
       proveedor_rut,
       proyecto_codigo_correlativo: solicitud.proyecto_codigo_correlativo,
       solicitud_material_id

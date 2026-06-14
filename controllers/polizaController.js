@@ -56,6 +56,21 @@ async function subirPoliza(req, res) {
       return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
     }
 
+    const polizaExistente = await DocumentoLegal.findOne({
+      where: {
+        trabajador_rut,
+        proyecto_codigo_correlativo,
+        documento_legal_tipo: 'poliza',
+        documento_legal_estado: 'Vigente'
+      }
+    });
+    if (polizaExistente) {
+      return res.status(409).json({
+        success: false,
+        error: `El trabajador ya tiene una póliza vigente para este proyecto (vence: ${polizaExistente.documento_legal_fecha_vencimiento}). Primero debe anularse la póliza existente.`
+      });
+    }
+
     const poliza = await DocumentoLegal.create({
       documento_legal_tipo: 'poliza',
       documento_legal_url_pdf: `/uploads/documentos/${req.file.filename}`,

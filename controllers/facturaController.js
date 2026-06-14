@@ -4,6 +4,7 @@ const fs = require('fs');
 const { Op } = require('sequelize');
 const OrdenCompra = require('../models/OrdenCompra');
 const DetalleOrdenCompra = require('../models/DetalleOrdenCompra');
+const GuiaDespacho = require('../models/GuiaDespacho');
 const Proveedor = require('../models/Proveedor');
 const Factura = require('../models/Factura');
 const LogAuditoria = require('../models/LogAuditoria');
@@ -37,7 +38,8 @@ async function getOrdenesPendientesFact(req, res) {
       where: { orden_compra_estado: { [Op.ne]: 'Facturado' } },
       include: [
         { model: Proveedor, attributes: ['proveedor_razon_social', 'proveedor_rut'] },
-        { model: DetalleOrdenCompra }
+        { model: DetalleOrdenCompra },
+        { model: GuiaDespacho, attributes: ['guia_despacho_id', 'guia_despacho_numero', 'guia_despacho_fecha', 'guia_despacho_estado'] }
       ],
       order: [['orden_compra_fecha', 'DESC']]
     });

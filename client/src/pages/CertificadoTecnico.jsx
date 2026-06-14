@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Award, FileCheck, Wrench } from 'lucide-react';
+import { Award, FileCheck, Wrench, Download } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
@@ -78,12 +78,20 @@ export default function CertificadoTecnico() {
                 }}
               >
                 <option value="">Selecciona un proyecto...</option>
-                {proyectos.map(p => (
-                  <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
-                    {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
-                  </option>
-                ))}
+                {proyectos
+                  .filter(p => p.EstadoProyecto?.estado_proyecto_nombre === 'Finalizado')
+                  .map(p => (
+                    <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
+                      {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
+                    </option>
+                  ))
+                }
               </select>
+              {proyectos.length > 0 && proyectos.filter(p => p.EstadoProyecto?.estado_proyecto_nombre === 'Finalizado').length === 0 && (
+                <span style={{ fontSize: 12, color: 'var(--color-warning)', display: 'block', marginTop: 6 }}>
+                  No hay proyectos en estado "Finalizado". Cambia el estado en Configuración.
+                </span>
+              )}
             </div>
 
             {proyectoSeleccionado && (
@@ -215,8 +223,20 @@ export default function CertificadoTecnico() {
                 </div>
               )}
 
-              <div style={{ marginTop: 16, padding: '10px 12px', background: 'rgba(212, 147, 10, 0.1)', border: '1px solid var(--color-warning)', borderRadius: 4, fontSize: 12, color: 'var(--color-warning)' }}>
-                Este documento está pendiente de firma. Descárgalo del módulo de documentos legales una vez firmado.
+              <a
+                href={resultado.certificado?.documento_legal_url_pdf}
+                target="_blank"
+                rel="noreferrer"
+                download
+                className="btn btn-primary"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 16, textDecoration: 'none' }}
+              >
+                <Download size={15} />
+                Descargar PDF
+              </a>
+
+              <div style={{ marginTop: 12, padding: '10px 12px', background: 'rgba(212, 147, 10, 0.1)', border: '1px solid var(--color-warning)', borderRadius: 4, fontSize: 12, color: 'var(--color-warning)' }}>
+                Documento pendiente de firma. Descárgalo, fírmalo y guárdalo.
               </div>
             </div>
           )}
