@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { Camera, MapPin, Upload, Send } from 'lucide-react';
+import { Camera, MapPin, Send, Image, X, Circle } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 
 export default function Evidencia() {
   const { toasts, addToast, removeToast } = useToast();
   const fileInputRef = useRef(null);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
   const [proyectos, setProyectos] = useState([]);
   const [hitos, setHitos] = useState([]);
   const [preview, setPreview] = useState(null);
@@ -14,11 +16,20 @@ export default function Evidencia() {
   const [form, setForm] = useState({ proyecto_codigo_correlativo: '', hito_tecnico_id: '' });
   const [foto, setFoto] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasCamera, setHasCamera] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
 
   useEffect(() => {
     api.get('/bitacora/proyectos')
       .then(r => setProyectos(r.data.data))
       .catch(() => addToast('Error al cargar proyectos', 'error'));
+
+    // Detectar si hay cámara disponible
+    if (navigator.mediaDevices?.enumerateDevices) {
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        setHasCamera(devices.some(d => d.kind === 'videoinput'));
+      }).catch(() => setHasCamera(false));
+    }
   }, []);
 
   useEffect(() => {
@@ -28,19 +39,21 @@ export default function Evidencia() {
       .catch(() => addToast('Error al cargar hitos', 'error'));
   }, [form.proyecto_codigo_correlativo]);
 
+  // Cleanup stream on unmount
+  useEffect(() => {
+    return () => streamRef.current?.getTracks().forEach(t => t.stop());
+  }, []);
+
   const getLocation = () => {
     if (!navigator.geolocation) { addToast('Geolocalización no disponible', 'warning'); return; }
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       pos => {
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        addToast(`Ubicación obtenida: ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`, 'success');
+        addToast(`Ubicación: ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`, 'success');
         setLocating(false);
       },
-      () => {
-        addToast('No se pudo obtener la ubicación', 'error');
-        setLocating(false);
-      }
+      () => { addToast('No se pudo obtener ubicación', 'error'); setLocating(false); }
     );
   };
 
@@ -52,6 +65,47 @@ export default function Evidencia() {
     reader.onload = ev => setPreview(ev.target.result);
     reader.readAsDataURL(file);
     getLocation();
+  };
+
+  const openCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      streamRef.current = stream;
+      setCameraOpen(true);
+      // Assign stream after modal renders
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.play();
+        }
+      }, 100);
+    } catch {
+      addToast('No se pudo acceder a la cámara. Verifica los permisos del navegador.', 'error');
+    }
+  };
+
+  const closeCamera = () => {
+    streamRef.current?.getTracks().forEach(t => t.stop());
+    streamRef.current = null;
+    setCameraOpen(false);
+  };
+
+  const capturePhoto = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    canvas.toBlob(blob => {
+      const file = new File([blob], `foto_camara_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      setFoto(file);
+      setPreview(canvas.toDataURL('image/jpeg'));
+      getLocation();
+      closeCamera();
+    }, 'image/jpeg', 0.85);
   };
 
   const handleSubmit = async e => {
@@ -122,9 +176,9 @@ export default function Evidencia() {
             </div>
           )}
 
-          {/* Foto */}
           <div className="form-group">
             <label className="form-label">Fotografía</label>
+
             <input
               type="file"
               ref={fileInputRef}
@@ -132,14 +186,19 @@ export default function Evidencia() {
               style={{ display: 'none' }}
               onChange={handleFile}
             />
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Upload size={15} />
-              {foto ? foto.name : 'Seleccionar imagen'}
-            </button>
+
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              {hasCamera && (
+                <button type="button" className="btn btn-secondary" onClick={openCamera}>
+                  <Camera size={15} />
+                  Usar cámara
+                </button>
+              )}
+              <button type="button" className="btn btn-secondary" onClick={() => fileInputRef.current?.click()}>
+                <Image size={15} />
+                {foto ? foto.name : 'Elegir archivo'}
+              </button>
+            </div>
 
             {preview && (
               <div style={{ marginTop: 12 }}>
@@ -152,7 +211,6 @@ export default function Evidencia() {
             )}
           </div>
 
-          {/* Coordenadas */}
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 16 }}>
             <button type="button" className="btn btn-secondary" onClick={getLocation} disabled={locating} style={{ flexShrink: 0 }}>
               <MapPin size={15} />
@@ -171,6 +229,48 @@ export default function Evidencia() {
           </button>
         </form>
       </div>
+
+      {/* Modal cámara */}
+      {cameraOpen && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)',
+          zIndex: 1000, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', gap: 16
+        }}>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            style={{ maxWidth: '90vw', maxHeight: '70vh', borderRadius: 8, background: '#000' }}
+          />
+          <div style={{ display: 'flex', gap: 16 }}>
+            <button
+              onClick={capturePhoto}
+              style={{
+                background: 'white', border: 'none', borderRadius: '50%',
+                width: 64, height: 64, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}
+              title="Capturar foto"
+            >
+              <Circle size={32} color="#0D1117" fill="#0D1117" />
+            </button>
+            <button
+              onClick={closeCamera}
+              style={{
+                background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)',
+                borderRadius: '50%', width: 64, height: 64, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white'
+              }}
+              title="Cancelar"
+            >
+              <X size={24} />
+            </button>
+          </div>
+          <span style={{ color: '#8B949E', fontSize: 13 }}>Botón blanco = capturar · X = cancelar</span>
+        </div>
+      )}
 
       <Toast toasts={toasts} removeToast={removeToast} />
     </div>

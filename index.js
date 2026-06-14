@@ -97,6 +97,7 @@ app.use('/api/poliza', require('./routes/poliza'));
 app.use('/api/certificado', require('./routes/certificado'));
 app.use('/api/presupuesto', require('./routes/presupuesto'));
 app.use('/api/recepcion', require('./routes/recepcion'));
+app.use('/api/setup',    require('./routes/setup'));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok', timestamp: new Date() } });
@@ -104,10 +105,27 @@ app.get('/api/health', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+const { DataTypes } = require('sequelize');
+
 sequelize.authenticate()
   .then(() => {
     console.log('Conexion a MySQL establecida.');
     return sequelize.sync({ alter: false });
+  })
+  .then(async () => {
+    // Migraciones puntuales: agregar columnas que faltan sin borrar datos
+    const qi = sequelize.queryInterface;
+    const migraciones = [
+      { tabla: 'PROYECTO',   columna: 'proveedor_rut',              tipo: { type: DataTypes.STRING(20),  allowNull: true } },
+      { tabla: 'TRABAJADOR', columna: 'proyecto_codigo_correlativo', tipo: { type: DataTypes.STRING(50),  allowNull: true } },
+      { tabla: 'CONTRATO_LABORAL', columna: 'proyecto_codigo_correlativo', tipo: { type: DataTypes.STRING(50), allowNull: true } },
+    ];
+    for (const m of migraciones) {
+      try {
+        await qi.addColumn(m.tabla, m.columna, m.tipo);
+        console.log(`Columna ${m.tabla}.${m.columna} agregada.`);
+      } catch (_) { /* ya existe, ignorar */ }
+    }
   })
   .then(() => {
     app.listen(PORT, () => {

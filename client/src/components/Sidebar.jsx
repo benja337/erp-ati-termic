@@ -1,20 +1,35 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { BookOpen, DollarSign, AlertTriangle, Camera, CheckSquare, ShoppingCart, FileText, BarChart2, LogOut, Menu, X } from 'lucide-react';
+import {
+  BookOpen, DollarSign, AlertTriangle, Camera, CheckSquare,
+  ShoppingCart, FileText, BarChart2, LogOut, Menu, X,
+  MessageSquare, Package, Award, Users, Briefcase, Image,
+  Search, TrendingUp, Shield, Settings
+} from 'lucide-react';
 import logo from '../assets/logo.png';
 
 const NAV_ITEMS = [
-  { to: '/bitacora', icon: BookOpen, label: 'Bitácora' },
-  { to: '/caja-chica', icon: DollarSign, label: 'Caja Chica' },
-  { to: '/sso', icon: AlertTriangle, label: 'Incidentes SSO' },
-  { to: '/evidencia', icon: Camera, label: 'Evidencias' }
+  { to: '/bitacora',          icon: BookOpen,       label: 'Bitácora Diaria' },
+  { to: '/caja-chica',        icon: DollarSign,     label: 'Caja Chica' },
+  { to: '/sso',               icon: AlertTriangle,  label: 'Incidentes SSO' },
+  { to: '/evidencia',         icon: Camera,         label: 'Evidencias' },
+  { to: '/comunicacion',      icon: MessageSquare,  label: 'Comunicaciones' },
+  { to: '/recepcion-insumos', icon: Package,        label: 'Recepción Insumos' },
+  { to: '/certificado',       icon: Award,          label: 'Certificado Técnico' }
 ];
 
 const ADMIN_ITEMS = [
-  { to: '/validar', icon: CheckSquare, label: 'Validar Evidencias' },
-  { to: '/orden-compra', icon: ShoppingCart, label: 'Órdenes de Compra' },
-  { to: '/vincular-factura', icon: FileText, label: 'Vincular Facturas' },
-  { to: '/control-costos', icon: BarChart2, label: 'Control de Costos' }
+  { to: '/validar',            icon: CheckSquare,  label: 'Validar Evidencias' },
+  { to: '/orden-compra',       icon: ShoppingCart, label: 'Órdenes de Compra' },
+  { to: '/vincular-factura',   icon: FileText,     label: 'Vincular Facturas' },
+  { to: '/control-costos',     icon: BarChart2,    label: 'Control de Costos' },
+  { to: '/subcontratistas',    icon: Users,        label: 'Subcontratistas' },
+  { to: '/mano-obra',          icon: Briefcase,    label: 'Mano de Obra' },
+  { to: '/portafolio',         icon: Image,        label: 'Portafolio de Obras' },
+  { to: '/documentos',         icon: Search,       label: 'Buscador Documentos' },
+  { to: '/control-presupuesto',icon: TrendingUp,   label: 'Control Presupuesto' },
+  { to: '/polizas',            icon: Shield,       label: 'Pólizas de Seguro' },
+  { to: '/configuracion',      icon: Settings,     label: 'Configuración' }
 ];
 
 const navStyle = (isActive) => ({
@@ -59,6 +74,17 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: '16px 0', overflowY: 'auto' }}>
+        {/* Sección general */}
+        <div style={{
+          padding: '0 20px 6px',
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: 'var(--color-text-muted)'
+        }}>
+          Operaciones
+        </div>
         {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
           <NavLink key={to} to={to} onClick={() => setMobileOpen(false)}
             style={({ isActive }) => navStyle(isActive)}>
@@ -67,10 +93,11 @@ export default function Sidebar() {
           </NavLink>
         ))}
 
+        {/* Sección administración */}
         {usuario.rol === 'admin' && (
           <>
             <div style={{
-              padding: '12px 20px 6px',
+              padding: '16px 20px 6px',
               fontSize: 10,
               fontWeight: 700,
               letterSpacing: '0.08em',
