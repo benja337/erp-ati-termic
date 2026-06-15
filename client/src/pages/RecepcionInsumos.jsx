@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Package, CheckCircle2, AlertTriangle, Navigation, XCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { MapPin, Package, CheckCircle2, AlertTriangle, Navigation, XCircle, Crosshair } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 import Badge from '../components/Badge';
 
 export default function RecepcionInsumos() {
   const { toasts, addToast, removeToast } = useToast();
+  const navigate = useNavigate();
   const [guias, setGuias] = useState([]);
   const [loading, setLoading] = useState(false);
   const [confirmando, setConfirmando] = useState(null);
-  const [coordsObra, setCoordsObra] = useState({ lat: '', lon: '' });
   const [obteniendo, setObteniendo] = useState(false);
+  const [gpsSupervisor, setGpsSupervisor] = useState(null); // { lat, lon } capturado, solo lectura
   const [resultado, setResultado] = useState(null); // { guia, distancia, verificada }
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export default function RecepcionInsumos() {
   const iniciarConfirmacion = guia => {
     setConfirmando(guia);
     setResultado(null);
-    setCoordsObra({ lat: '', lon: '' });
+    setGpsSupervisor(null);
   };
 
   const cancelarConfirmacion = () => {
@@ -36,35 +38,36 @@ export default function RecepcionInsumos() {
     setCoordsObra({ lat: '', lon: '' });
   };
 
-  const confirmarConGPS = () => {
+  const detectarGPS = () => {
     if (!navigator.geolocation) {
       addToast('Tu dispositivo no soporta geolocalización', 'error'); return;
     }
-    if (!coordsObra.lat || !coordsObra.lon) {
-      addToast('Ingresa primero las coordenadas de la obra', 'error'); return;
-    }
     setObteniendo(true);
+    setGpsSupervisor(null);
     navigator.geolocation.getCurrentPosition(
       pos => {
         setObteniendo(false);
-        enviarRecepcion(confirmando, pos.coords.latitude, pos.coords.longitude);
+        setGpsSupervisor({ lat: pos.coords.latitude, lon: pos.coords.longitude, precision: Math.round(pos.coords.accuracy) });
       },
       err => {
         setObteniendo(false);
         if (err.code === 1) addToast('Permiso de ubicación denegado. Habilítalo en la configuración del navegador.', 'error');
-        else addToast('No se pudo obtener la ubicación. Verifica el GPS.', 'error');
+        else addToast('No se pudo obtener el GPS. Verifica que la ubicación esté activa en el dispositivo.', 'error');
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 15000 }
     );
+  };
+
+  const confirmarConGPS = () => {
+    if (!gpsSupervisor) { addToast('Primero detecta tu ubicación GPS', 'error'); return; }
+    enviarRecepcion(confirmando, gpsSupervisor.lat, gpsSupervisor.lon);
   };
 
   const enviarRecepcion = async (guia, latSupervisor, lonSupervisor) => {
     try {
       const r = await api.post(`/recepcion/${guia.guia_despacho_id}/confirmar`, {
         latitud_supervisor: latSupervisor,
-        longitud_supervisor: lonSupervisor,
-        latitud_obra: parseFloat(coordsObra.lat),
-        longitud_obra: parseFloat(coordsObra.lon)
+        longitud_supervisor: lonSupervisor
       });
       const data = r.data.data;
       setResultado({ guia, distancia: data.distancia_metros, verificada: data.ubicacion_verificada, fueraDeRango: data.fuera_de_rango });
@@ -112,7 +115,7 @@ export default function RecepcionInsumos() {
               </div>
               <div style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
                 Guía N° {resultado.guia.guia_despacho_numero} · Distancia registrada: <strong>{resultado.distancia}m</strong>
-                {resultado.fueraDeRango && ` (máx. permitido: 500m)`}
+                {resultado.fueraDeRango && ` (máx. permitido: 5000m)`}
               </div>
               {resultado.fueraDeRango && (
                 <div style={{ fontSize: 12, marginTop: 8, color: 'var(--color-text-muted)' }}>
@@ -161,6 +164,11 @@ export default function RecepcionInsumos() {
                   <div style={{ fontWeight: 700, fontSize: 14 }}>Guía N° {g.guia_despacho_numero}</div>
                   <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
                     Fecha: {g.guia_despacho_fecha} · OC #{g.orden_compra_id}
+                    {g.OrdenCompra?.Proyecto && (
+                      <span style={{ marginLeft: 8, color: 'var(--color-text-secondary)' }}>
+                        · {g.OrdenCompra.proyecto_codigo_correlativo} — {g.OrdenCompra.Proyecto.proyecto_nombre_obra}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -180,63 +188,124 @@ export default function RecepcionInsumos() {
             </div>
 
             {/* Panel de confirmación GPS */}
-            {confirmando?.guia_despacho_id === g.guia_despacho_id && (
-              <div style={{ borderTop: '1px solid var(--color-border)', padding: 20 }}>
-                <div style={{
-                  display: 'flex', alignItems: 'flex-start', gap: 10,
-                  background: 'rgba(212, 147, 10, 0.08)',
-                  border: '1px solid var(--color-warning)',
-                  borderRadius: 4, padding: '10px 14px', marginBottom: 16,
-                  fontSize: 12, color: 'var(--color-warning)'
-                }}>
-                  <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
-                  El sistema verificará que estés dentro de 500m del sitio de la obra.
-                  Si estás fuera de rango, la recepción igual se guardará pero sin la etiqueta de ubicación verificada.
-                </div>
+            {confirmando?.guia_despacho_id === g.guia_despacho_id && (() => {
+              const proyecto = g.OrdenCompra?.Proyecto;
+              const tieneCoords = proyecto?.proyecto_latitud && proyecto?.proyecto_longitud;
+              return (
+                <div style={{ borderTop: '1px solid var(--color-border)', padding: 20 }}>
+                  {tieneCoords && (
+                    <div style={{
+                      display: 'flex', alignItems: 'flex-start', gap: 10,
+                      background: 'rgba(212, 147, 10, 0.08)',
+                      border: '1px solid var(--color-warning)',
+                      borderRadius: 4, padding: '10px 14px', marginBottom: 16,
+                      fontSize: 12, color: 'var(--color-warning)'
+                    }}>
+                      <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
+                      El sistema verificará que estés dentro de 5000m del sitio de la obra.
+                      Si estás fuera de rango, la recepción igual se guardará pero sin la etiqueta de ubicación verificada.
+                    </div>
+                  )}
 
-                <p style={{ fontSize: 12, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>
-                  Coordenadas de la Obra
-                </p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label">Latitud</label>
-                    <input
-                      type="number"
-                      step="any"
-                      className="form-input"
-                      placeholder="-33.4567"
-                      value={coordsObra.lat}
-                      onChange={e => setCoordsObra(c => ({ ...c, lat: e.target.value }))}
-                    />
-                  </div>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label">Longitud</label>
-                    <input
-                      type="number"
-                      step="any"
-                      className="form-input"
-                      placeholder="-70.6483"
-                      value={coordsObra.lon}
-                      onChange={e => setCoordsObra(c => ({ ...c, lon: e.target.value }))}
-                    />
-                  </div>
-                </div>
+                  {tieneCoords ? (
+                    <div style={{
+                      background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)',
+                      borderRadius: 4, padding: '10px 14px', marginBottom: 16,
+                      fontSize: 12, color: 'var(--color-text-secondary)'
+                    }}>
+                      <div style={{ fontWeight: 600, marginBottom: 4, color: 'var(--color-text-primary)' }}>
+                        Ubicación de la Obra (configurada por el administrador)
+                      </div>
+                      <div style={{ fontFamily: 'monospace' }}>
+                        {parseFloat(proyecto.proyecto_latitud).toFixed(6)}, {parseFloat(proyecto.proyecto_longitud).toFixed(6)}
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{
+                      background: 'rgba(220,38,38,0.07)', border: '1px solid var(--color-danger)',
+                      borderRadius: 6, padding: '14px 16px', marginBottom: 16
+                    }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-danger)', marginBottom: 6 }}>
+                        Sin coordenadas GPS configuradas
+                      </div>
+                      <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginBottom: 12 }}>
+                        El proyecto <strong style={{ color: 'var(--color-text-primary)' }}>
+                          {g.OrdenCompra?.proyecto_codigo_correlativo} — {g.OrdenCompra?.Proyecto?.proyecto_nombre_obra ?? 'desconocido'}
+                        </strong> no tiene las coordenadas del sitio de obra registradas.
+                        Configúralas y vuelve aquí.
+                      </div>
+                      <button
+                        className="btn btn-secondary"
+                        style={{ fontSize: 12, height: 30, padding: '0 12px' }}
+                        onClick={() => navigate('/configuracion')}
+                      >
+                        Ir a Configuración → Proyectos
+                      </button>
+                    </div>
+                  )}
 
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <button
-                    className="btn btn-success"
-                    onClick={confirmarConGPS}
-                    disabled={obteniendo || !coordsObra.lat || !coordsObra.lon}
-                  >
-                    <Navigation size={14} />
-                    {obteniendo ? 'Obteniendo GPS...' : 'Confirmar Recepción Final'}
-                  </button>
-                  <button className="btn btn-secondary" onClick={cancelarConfirmacion}>
-                    Cancelar
-                  </button>
+                  {/* Sección GPS del supervisor */}
+                  <div style={{ marginBottom: 16 }}>
+                    <div style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, marginBottom: 8 }}>
+                      Tu ubicación actual (GPS del dispositivo)
+                    </div>
+
+                    {!gpsSupervisor ? (
+                      <button
+                        className="btn btn-secondary"
+                        onClick={detectarGPS}
+                        disabled={obteniendo || !tieneCoords}
+                        style={{ fontSize: 13 }}
+                      >
+                        <Navigation size={14} />
+                        {obteniendo ? 'Detectando GPS...' : 'Detectar mi ubicación GPS'}
+                      </button>
+                    ) : (
+                      <div style={{
+                        background: 'var(--color-bg-elevated)',
+                        border: '1px solid var(--color-green)',
+                        borderRadius: 4, padding: '10px 14px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                      }}>
+                        <div>
+                          <div style={{ fontSize: 12, color: 'var(--color-green)', fontWeight: 600, marginBottom: 2, display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <CheckCircle2 size={13} /> Ubicación detectada
+                          </div>
+                          <div style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--color-text-primary)' }}>
+                            {gpsSupervisor.lat.toFixed(6)}, {gpsSupervisor.lon.toFixed(6)}
+                          </div>
+                          <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 2 }}>
+                            Precisión aproximada: ±{gpsSupervisor.precision}m
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={detectarGPS}
+                          disabled={obteniendo}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, color: 'var(--color-text-muted)', textDecoration: 'underline' }}
+                        >
+                          {obteniendo ? 'Detectando...' : 'Volver a detectar'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <button
+                      className="btn btn-primary"
+                      onClick={confirmarConGPS}
+                      disabled={obteniendo || !tieneCoords || !gpsSupervisor}
+                    >
+                      <CheckCircle2 size={14} />
+                      Confirmar Recepción Final
+                    </button>
+                    <button className="btn btn-secondary" onClick={cancelarConfirmacion}>
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
         ))}
       </div>

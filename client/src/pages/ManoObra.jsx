@@ -74,7 +74,7 @@ export default function ManoObra() {
 
       {/* Selectores */}
       <div className="card" style={{ maxWidth: 640, marginBottom: 24 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="form-grid-2" style={{ marginBottom: 16 }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Proyecto</label>
             <select
@@ -172,7 +172,7 @@ export default function ManoObra() {
           </div>
 
           {/* Panel detalle de contratos por trabajador */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 20, maxWidth: 860 }}>
+          <div className="layout-split" style={{ maxWidth: 860 }}>
             <div className="card" style={{ padding: 0 }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--color-border)' }}>
                 <h3 style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>

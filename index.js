@@ -54,6 +54,9 @@ DetalleOrdenCompra.belongsTo(OrdenCompra, { foreignKey: 'orden_compra_id' });
 OrdenCompra.hasMany(GuiaDespacho, { foreignKey: 'orden_compra_id' });
 GuiaDespacho.belongsTo(OrdenCompra, { foreignKey: 'orden_compra_id' });
 
+Proyecto.hasMany(OrdenCompra, { foreignKey: 'proyecto_codigo_correlativo' });
+OrdenCompra.belongsTo(Proyecto, { foreignKey: 'proyecto_codigo_correlativo' });
+
 OrdenCompra.hasMany(Factura, { foreignKey: 'orden_compra_id' });
 Factura.belongsTo(OrdenCompra, { foreignKey: 'orden_compra_id' });
 
@@ -124,6 +127,8 @@ sequelize.authenticate()
       { tabla: 'INCIDENTE_SSO', columna: 'incidente_sso_lugar', tipo: { type: DataTypes.STRING(255), allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_descripcion_tecnica', tipo: { type: DataTypes.TEXT, allowNull: true } },
       { tabla: 'PROYECTO', columna: 'proyecto_ubicacion', tipo: { type: DataTypes.STRING(255), allowNull: true } },
+      { tabla: 'PROYECTO', columna: 'proyecto_latitud',  tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
+      { tabla: 'PROYECTO', columna: 'proyecto_longitud', tipo: { type: DataTypes.DECIMAL(10, 7), allowNull: true } },
     ];
     for (const m of migraciones) {
       try {

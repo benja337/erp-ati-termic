@@ -82,7 +82,7 @@ export default function SSO() {
 
       <div className="card" style={{ maxWidth: 720 }}>
         <form onSubmit={handleSubmit}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="form-grid-2">
             <div className="form-group">
               <label className="form-label">Proyecto</label>
               <select
@@ -114,7 +114,7 @@ export default function SSO() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="form-grid-2">
             <div className="form-group">
               <label className="form-label">Gravedad *</label>
               <select
@@ -178,11 +178,10 @@ export default function SSO() {
             </div>
 
             {involucrados.map((inv, idx) => (
-              <div key={idx} style={{
+              <div key={idx} className="involucrado-grid" style={{
                 background: 'var(--color-bg-elevated)',
                 border: '1px solid var(--color-border)',
                 borderRadius: 4, padding: '12px 14px', marginBottom: 8,
-                display: 'grid', gridTemplateColumns: '1fr 80px 1fr auto', gap: 10, alignItems: 'end'
               }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label" style={{ fontSize: 11 }}>RUT Trabajador</label>

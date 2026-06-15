@@ -275,8 +275,26 @@ async function crearContratoLaboral(req, res) {
   }
 }
 
+async function actualizarCoordenadasProyecto(req, res) {
+  try {
+    const { codigo } = req.params;
+    const { latitud, longitud } = req.body;
+    if (latitud === undefined || longitud === undefined)
+      return res.status(400).json({ success: false, error: 'Latitud y longitud son requeridas' });
+    const proyecto = await Proyecto.findByPk(codigo);
+    if (!proyecto)
+      return res.status(404).json({ success: false, error: 'Proyecto no encontrado' });
+    await proyecto.update({ proyecto_latitud: parseFloat(latitud), proyecto_longitud: parseFloat(longitud) });
+    await audit(`Coordenadas GPS del proyecto ${codigo} actualizadas`, 'SETUP', req.user.rut);
+    return res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, error: 'Error al actualizar coordenadas' });
+  }
+}
+
 module.exports = {
   getEstados, getEspecialidades, getProyectos, getTrabajadores, getOrdenes,
   crearProyecto, crearProveedor, crearTrabajador, crearHito, crearSolicitudMaterial,
-  crearGuiaDespacho, crearContratoLaboral
+  crearGuiaDespacho, crearContratoLaboral, actualizarCoordenadasProyecto
 };

@@ -124,7 +124,7 @@ export default function Portafolio() {
             {/* Panel de edición */}
             {editando === p.proyecto_codigo_correlativo && (
               <div style={{ borderTop: '1px solid var(--color-border)', padding: 20 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div className="form-grid-2" style={{ marginBottom: 16 }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label">Nombre / Título de Obra</label>
                     <input
@@ -157,7 +157,7 @@ export default function Portafolio() {
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <div className="form-grid-2" style={{ marginBottom: 16 }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
                     <label className="form-label">Correo de Contacto</label>
                     <input

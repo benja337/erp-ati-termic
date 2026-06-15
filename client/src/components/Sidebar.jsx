@@ -197,36 +197,63 @@ export default function Sidebar() {
 
   return (
     <>
+      {/* Sidebar — visible en desktop */}
       <div className="sidebar-desktop" style={{ display: 'flex' }}>
         {sidebarContent}
       </div>
 
-      <button
-        className="hamburger-btn"
-        onClick={() => setMobileOpen(true)}
-        style={{
-          display: 'none', position: 'fixed', top: 12, left: 12, zIndex: 100,
-          background: '#0C1322', border: '1px solid #1A2840',
-          borderRadius: 7, padding: '7px 9px', cursor: 'pointer', color: '#E8EFFE',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
-        }}
-      >
-        <Menu size={20} />
-      </button>
+      {/* Header top bar — solo en móvil */}
+      <div className="mobile-header">
+        <button
+          onClick={() => setMobileOpen(true)}
+          style={{
+            background: 'none', border: '1px solid #1A2840', borderRadius: 7,
+            padding: '6px 9px', cursor: 'pointer', color: '#E8EFFE',
+            display: 'flex', alignItems: 'center', flexShrink: 0,
+          }}
+        >
+          <Menu size={19} />
+        </button>
 
+        <div style={{
+          background: '#ffffff', borderRadius: 6, padding: '5px 10px',
+          display: 'flex', alignItems: 'center',
+        }}>
+          <img src={logo} alt="ATI Termic" style={{ height: 22, display: 'block' }} />
+        </div>
+
+        <div style={{
+          width: 32, height: 32, borderRadius: 7, flexShrink: 0,
+          background: 'linear-gradient(135deg, #2563EB 0%, #5DB835 100%)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: 0.5,
+        }}>
+          {initials}
+        </div>
+      </div>
+
+      {/* Drawer móvil */}
       {mobileOpen && (
         <>
-          <div onClick={() => setMobileOpen(false)}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, backdropFilter: 'blur(2px)' }}
+          <div
+            onClick={() => setMobileOpen(false)}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
+              zIndex: 200, backdropFilter: 'blur(3px)',
+            }}
           />
           <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 300, animation: 'slideRight 0.2s ease' }}>
             {sidebarContent}
-            <button onClick={() => setMobileOpen(false)} style={{
-              position: 'absolute', top: 14, right: -44,
-              background: '#0C1322', border: '1px solid #1A2840',
-              borderRadius: 7, padding: '5px 7px', cursor: 'pointer', color: '#E8EFFE',
-            }}>
-              <X size={18} />
+            <button
+              onClick={() => setMobileOpen(false)}
+              style={{
+                position: 'absolute', top: 14, right: -42,
+                background: '#0C1322', border: '1px solid #1A2840',
+                borderRadius: 7, padding: '6px 8px', cursor: 'pointer', color: '#E8EFFE',
+                display: 'flex', alignItems: 'center',
+              }}
+            >
+              <X size={17} />
             </button>
           </div>
         </>
@@ -235,7 +262,6 @@ export default function Sidebar() {
       <style>{`
         @media (max-width: 768px) {
           .sidebar-desktop { display: none !important; }
-          .hamburger-btn { display: flex !important; }
         }
         @keyframes slideRight {
           from { transform: translateX(-100%); opacity: 0; }

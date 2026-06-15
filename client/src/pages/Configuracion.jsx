@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Settings, FolderPlus, Building2, UserPlus, Flag,
-  ClipboardList, Truck, FileText
+  ClipboardList, Truck, FileText, MapPin
 } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
@@ -18,7 +18,6 @@ const TABS = [
 ];
 
 const fieldStyle = { marginBottom: 0 };
-const grid2 = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 };
 
 export default function Configuracion() {
   const { toasts, addToast, removeToast } = useToast();
@@ -31,6 +30,8 @@ export default function Configuracion() {
   const [loading, setLoading] = useState(false);
 
   const [fProyecto,   setFProyecto]   = useState({ codigo: '', nombre: '', presupuesto: '', correo: '', estado_id: '' });
+  const [fCoords,     setFCoords]     = useState({ codigo: '', lat: '', lon: '' });
+  const [loadingCoords, setLoadingCoords] = useState(false);
   const [fProveedor,  setFProveedor]  = useState({ rut: '', razon_social: '', correo: '', telefono: '' });
   const [fTrabajador, setFTrabajador] = useState({ rut: '', nombres: '', correo: '', telefono: '', especialidad_id: '', proyecto_codigo: '' });
   const [fHito,       setFHito]       = useState({ nombre: '', proyecto_codigo: '', avance: '0' });
@@ -77,6 +78,27 @@ export default function Configuracion() {
       proyecto_correo_contacto: fProyecto.correo,
       estado_proyecto_id: fProyecto.estado_id
     }, () => setFProyecto({ codigo: '', nombre: '', presupuesto: '', correo: '', estado_id: '' }));
+  };
+
+  const submitCoords = async e => {
+    e.preventDefault();
+    if (!fCoords.codigo || !fCoords.lat || !fCoords.lon)
+      return addToast('Selecciona un proyecto e ingresa latitud y longitud', 'error');
+    const lat = parseFloat(fCoords.lat);
+    const lon = parseFloat(fCoords.lon);
+    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180)
+      return addToast('Coordenadas inválidas. Latitud: -90 a 90 / Longitud: -180 a 180', 'error');
+    setLoadingCoords(true);
+    try {
+      await api.put(`/setup/proyecto/${fCoords.codigo}/coordenadas`, { latitud: lat, longitud: lon });
+      addToast('Coordenadas GPS del proyecto guardadas', 'success');
+      setFCoords({ codigo: '', lat: '', lon: '' });
+      cargarProyectos();
+    } catch (err) {
+      addToast(err.response?.data?.error || 'Error al guardar coordenadas', 'error');
+    } finally {
+      setLoadingCoords(false);
+    }
   };
 
   const submitProveedor = e => {
@@ -204,7 +226,7 @@ export default function Configuracion() {
           <div className="card">
             <SectionTitle>Nuevo Proyecto</SectionTitle>
             <form onSubmit={submitProyecto}>
-              <div style={grid2}>
+              <div className="form-grid-2">
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">Código (ej: OBR-2024-001)</label>
                   <input className="form-input" placeholder="OBR-2024-001" value={fProyecto.codigo}
@@ -224,7 +246,7 @@ export default function Configuracion() {
                 <input className="form-input" placeholder="Nombre descriptivo..." value={fProyecto.nombre}
                   onChange={e => setFProyecto(f => ({ ...f, nombre: e.target.value }))} />
               </div>
-              <div style={{ ...grid2, marginTop: 0 }}>
+              <div className="form-grid-2">
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">Presupuesto ($)</label>
                   <input type="number" className="form-input" placeholder="0" min="1" value={fProyecto.presupuesto}
@@ -248,13 +270,16 @@ export default function Configuracion() {
                 </p>
                 <div className="table-container">
                   <table>
-                    <thead><tr><th>Código</th><th>Nombre</th><th>Estado</th></tr></thead>
+                    <thead><tr><th>Código</th><th>Nombre</th><th>Estado</th><th>GPS Obra</th></tr></thead>
                     <tbody>
                       {proyectos.map(p => (
                         <tr key={p.proyecto_codigo_correlativo}>
                           <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{p.proyecto_codigo_correlativo}</td>
                           <td style={{ fontSize: 13 }}>{p.proyecto_nombre_obra}</td>
                           <td><Badge value={p.EstadoProyecto?.estado_proyecto_nombre} /></td>
+                          <td style={{ fontSize: 11, fontFamily: 'monospace', color: p.proyecto_latitud ? 'var(--color-green)' : 'var(--color-text-muted)' }}>
+                            {p.proyecto_latitud ? `${parseFloat(p.proyecto_latitud).toFixed(4)}, ${parseFloat(p.proyecto_longitud).toFixed(4)}` : '—'}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -262,6 +287,45 @@ export default function Configuracion() {
                 </div>
               </div>
             )}
+
+            {/* Coordenadas GPS por proyecto */}
+            <div style={{ marginTop: 28, borderTop: '1px solid var(--color-border)', paddingTop: 24 }}>
+              <SectionTitle><MapPin size={12} style={{ marginRight: 6, display: 'inline' }} />Coordenadas GPS de la Obra</SectionTitle>
+              <p style={{ fontSize: 12, color: 'var(--color-text-muted)', marginBottom: 16 }}>
+                Configura la ubicación GPS del sitio de cada proyecto. El sistema la usa para verificar la recepción de insumos en obra.
+                Obtén las coordenadas desde Google Maps (clic derecho sobre el punto → copiar coordenadas).
+              </p>
+              <form onSubmit={submitCoords}>
+                <div className="form-group">
+                  <label className="form-label">Proyecto</label>
+                  <select className="form-select" value={fCoords.codigo}
+                    onChange={e => setFCoords(f => ({ ...f, codigo: e.target.value }))}>
+                    <option value="">Selecciona un proyecto...</option>
+                    {proyectos.map(p => (
+                      <option key={p.proyecto_codigo_correlativo} value={p.proyecto_codigo_correlativo}>
+                        {p.proyecto_codigo_correlativo} — {p.proyecto_nombre_obra}
+                        {p.proyecto_latitud ? ' ✓' : ' (sin coords)'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-grid-2">
+                  <div className="form-group" style={fieldStyle}>
+                    <label className="form-label">Latitud</label>
+                    <input className="form-input" placeholder="-33.456789" value={fCoords.lat}
+                      onChange={e => setFCoords(f => ({ ...f, lat: e.target.value }))} />
+                  </div>
+                  <div className="form-group" style={fieldStyle}>
+                    <label className="form-label">Longitud</label>
+                    <input className="form-input" placeholder="-70.648300" value={fCoords.lon}
+                      onChange={e => setFCoords(f => ({ ...f, lon: e.target.value }))} />
+                  </div>
+                </div>
+                <button type="submit" className="btn btn-primary" style={{ marginTop: 16 }} disabled={loadingCoords}>
+                  <MapPin size={15} /> {loadingCoords ? 'Guardando...' : 'Guardar Coordenadas'}
+                </button>
+              </form>
+            </div>
           </div>
         )}
 
@@ -270,7 +334,7 @@ export default function Configuracion() {
           <div className="card">
             <SectionTitle>Nuevo Proveedor / Subcontratista</SectionTitle>
             <form onSubmit={submitProveedor}>
-              <div style={grid2}>
+              <div className="form-grid-2">
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">RUT (ej: 76543210-9)</label>
                   <input className="form-input" placeholder="12345678-9" value={fProveedor.rut}
@@ -307,7 +371,7 @@ export default function Configuracion() {
               Puedes registrar trabajadores sin asignarlos a un proyecto todavía. Podrás asignarlos más adelante.
             </p>
             <form onSubmit={submitTrabajador}>
-              <div style={grid2}>
+              <div className="form-grid-2">
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">RUT</label>
                   <input className="form-input" placeholder="12345678-9" value={fTrabajador.rut}
@@ -329,7 +393,7 @@ export default function Configuracion() {
                 <input type="email" className="form-input" placeholder="trabajador@correo.cl" value={fTrabajador.correo}
                   onChange={e => setFTrabajador(f => ({ ...f, correo: e.target.value }))} />
               </div>
-              <div style={grid2}>
+              <div className="form-grid-2">
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">Especialidad</label>
                   <select className="form-select" value={fTrabajador.especialidad_id}
@@ -361,7 +425,7 @@ export default function Configuracion() {
                 <input className="form-input" placeholder="Ej: Instalación de ductos, Prueba final..." value={fHito.nombre}
                   onChange={e => setFHito(f => ({ ...f, nombre: e.target.value }))} />
               </div>
-              <div style={grid2}>
+              <div className="form-grid-2">
                 <ProyectoSelect value={fHito.proyecto_codigo} required
                   onChange={e => setFHito(f => ({ ...f, proyecto_codigo: e.target.value }))} />
                 <div className="form-group" style={fieldStyle}>
@@ -390,7 +454,7 @@ export default function Configuracion() {
                 <textarea className="form-textarea" rows={3} placeholder="Describe qué materiales se necesitan..."
                   value={fSM.descripcion} onChange={e => setFSM(f => ({ ...f, descripcion: e.target.value }))} />
               </div>
-              <div style={grid2}>
+              <div className="form-grid-2">
                 <div className="form-group" style={fieldStyle}>
                   <label className="form-label">Cantidad (unidades)</label>
                   <input type="number" className="form-input" placeholder="1" min="1" value={fSM.cantidad}
@@ -419,7 +483,7 @@ export default function Configuracion() {
               </div>
             ) : (
               <form onSubmit={submitGuia}>
-                <div style={grid2}>
+                <div className="form-grid-2">
                   <div className="form-group" style={fieldStyle}>
                     <label className="form-label">Número de Guía</label>
                     <input className="form-input" placeholder="GD-001" value={fGuia.numero}
@@ -476,7 +540,7 @@ export default function Configuracion() {
                     ))}
                   </select>
                 </div>
-                <div style={grid2}>
+                <div className="form-grid-2">
                   <div className="form-group" style={fieldStyle}>
                     <label className="form-label">Sueldo Base ($)</label>
                     <input type="number" className="form-input" placeholder="0" min="0" value={fContrato.sueldo}
@@ -488,7 +552,7 @@ export default function Configuracion() {
                       onChange={e => setFContrato(f => ({ ...f, leyes: e.target.value }))} />
                   </div>
                 </div>
-                <div style={grid2}>
+                <div className="form-grid-2">
                   <div className="form-group" style={fieldStyle}>
                     <label className="form-label">Fecha Inicio</label>
                     <input type="date" className="form-input" value={fContrato.inicio}

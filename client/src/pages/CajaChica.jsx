@@ -100,7 +100,7 @@ export default function CajaChica() {
 
         {/* Saldo */}
         {saldo && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginTop: 16 }}>
+          <div className="form-grid-3" style={{ marginTop: 16 }}>
             <div style={{ background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', borderRadius: 4, padding: '10px 14px' }}>
               <div style={{ fontSize: 11, color: 'var(--color-text-muted)', textTransform: 'uppercase', marginBottom: 4 }}>Presupuesto</div>
               <div style={{ fontSize: 16, fontWeight: 700 }}>{fmt(saldo.presupuesto)}</div>

@@ -370,10 +370,159 @@ tbody tr:last-child td {
 }
 
 /* ──────────────────────────────
-   MOBILE
+   MOBILE HEADER BAR
+────────────────────────────── */
+.mobile-header {
+  display: none;
+}
+
+/* ──────────────────────────────
+   RESPONSIVE GRID UTILITIES
+────────────────────────────── */
+
+/* 2 columnas → 1 en móvil */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* 3 columnas → 1 en móvil */
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+/* Layout partido: formulario | detalle (2 paneles horizontales)
+   auto-fit: 2 columnas en pantallas anchas, 1 columna cuando no cabe */
+.layout-split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Fila de involucrado SSO (4 columnas) */
+.involucrado-grid {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.mob-stack {
+  /* flex rows that collapse to column on mobile */
+}
+
+/* ──────────────────────────────
+   MOBILE  ≤ 768px
 ────────────────────────────── */
 @media (max-width: 768px) {
-  .page-container {
-    padding: 18px 16px;
+
+  /* Top bar */
+  .mobile-header {
+    display: flex !important;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 52px;
+    background: linear-gradient(180deg, #0C1322 0%, #080E1A 100%);
+    border-bottom: 1px solid #1A2840;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    z-index: 150;
+    gap: 12px;
   }
+
+  /* Push content below the top bar */
+  .main-content {
+    padding-top: 52px;
+  }
+
+  /* Page layout */
+  .page-container {
+    padding: 16px 14px 32px;
+  }
+
+  .page-title {
+    font-size: 17px;
+    margin-bottom: 18px;
+  }
+
+  /* Cards */
+  .card {
+    padding: 16px 14px;
+  }
+
+  /* Forms — prevent iOS auto-zoom on focus (min 16px) */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 16px;
+    height: 44px;
+  }
+
+  .form-textarea {
+    height: auto;
+    min-height: 88px;
+  }
+
+  /* Buttons — comfortable touch targets */
+  .btn {
+    min-height: 42px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  /* Tables */
+  .table-container {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  thead th {
+    padding: 9px 12px;
+    font-size: 10.5px;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  /* Saldo boxes */
+  .saldo-value {
+    font-size: 18px;
+  }
+
+  /* Flex rows that should stack */
+  .mob-stack {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .mob-stack > * {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Full-width buttons on mobile when in a stack */
+  .mob-btn-full {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Grid utilities → single column on mobile */
+  .form-grid-2,
+  .form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Involucrado SSO → 2 columnas en tablet, 1 en móvil pequeño */
+  .involucrado-grid {
+    grid-template-columns: 1fr auto;
+    row-gap: 8px;
+  }
+  .involucrado-grid > :nth-child(1) { grid-column: 1 / -1; }
+  .involucrado-grid > :nth-child(3) { grid-column: 1; }
 }

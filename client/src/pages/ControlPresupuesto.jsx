@@ -89,7 +89,7 @@ export default function ControlPresupuesto() {
       </div>
 
       {codigoSeleccionado && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 20, maxWidth: 900 }}>
+        <div className="layout-split" style={{ maxWidth: 900 }}>
           {/* Formulario de cambio */}
           <div className="card">
             <h3 style={{ marginBottom: 16, fontSize: 13, fontWeight: 700, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>

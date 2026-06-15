@@ -10,7 +10,9 @@ const Proyecto = sequelize.define('Proyecto', {
   estado_proyecto_id: { type: DataTypes.INTEGER, allowNull: false },
   proveedor_rut: { type: DataTypes.STRING(20), allowNull: true },
   proyecto_descripcion_tecnica: { type: DataTypes.TEXT, allowNull: true },
-  proyecto_ubicacion: { type: DataTypes.STRING(255), allowNull: true }
+  proyecto_ubicacion: { type: DataTypes.STRING(255), allowNull: true },
+  proyecto_latitud: { type: DataTypes.DECIMAL(10, 7), allowNull: true },
+  proyecto_longitud: { type: DataTypes.DECIMAL(10, 7), allowNull: true }
 }, {
   tableName: 'PROYECTO',
   timestamps: false

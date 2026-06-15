@@ -1,7 +1,9 @@
 const GuiaDespacho = require('../models/GuiaDespacho');
+const OrdenCompra = require('../models/OrdenCompra');
+const Proyecto = require('../models/Proyecto');
 const LogAuditoria = require('../models/LogAuditoria');
 
-const RADIO_MAXIMO_METROS = 500;
+const RADIO_MAXIMO_METROS = 5000;
 
 function calcularDistancia(lat1, lon1, lat2, lon2) {
   const R = 6371000;
@@ -19,7 +21,12 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
 async function getGuiasPendientes(req, res) {
   try {
     const guias = await GuiaDespacho.findAll({
-      where: { guia_despacho_estado: 'Pendiente' }
+      where: { guia_despacho_estado: 'Pendiente' },
+      include: [{
+        model: OrdenCompra,
+        attributes: ['proyecto_codigo_correlativo'],
+        include: [{ model: Proyecto, attributes: ['proyecto_latitud', 'proyecto_longitud', 'proyecto_nombre_obra'] }]
+      }]
     });
     return res.json({ success: true, data: guias });
   } catch (err) {
@@ -31,22 +38,32 @@ async function getGuiasPendientes(req, res) {
 async function confirmarRecepcion(req, res) {
   try {
     const { id } = req.params;
-    const { latitud_supervisor, longitud_supervisor, latitud_obra, longitud_obra } = req.body;
+    const { latitud_supervisor, longitud_supervisor } = req.body;
 
-    if (!latitud_supervisor || !longitud_supervisor || !latitud_obra || !longitud_obra) {
-      return res.status(400).json({ success: false, error: 'Coordenadas del supervisor y de la obra son requeridas' });
+    if (!latitud_supervisor || !longitud_supervisor) {
+      return res.status(400).json({ success: false, error: 'Coordenadas GPS del supervisor son requeridas' });
     }
 
-    const guia = await GuiaDespacho.findByPk(id);
+    const guia = await GuiaDespacho.findByPk(id, {
+      include: [{
+        model: OrdenCompra,
+        include: [{ model: Proyecto, attributes: ['proyecto_latitud', 'proyecto_longitud'] }]
+      }]
+    });
     if (!guia) {
       return res.status(404).json({ success: false, error: 'Guía de despacho no encontrada' });
+    }
+
+    const proyecto = guia.OrdenCompra?.Proyecto;
+    if (!proyecto?.proyecto_latitud || !proyecto?.proyecto_longitud) {
+      return res.status(400).json({ success: false, error: 'El proyecto no tiene coordenadas GPS configuradas. El administrador debe configurarlas en Configuración → Proyectos.' });
     }
 
     const distancia = calcularDistancia(
       parseFloat(latitud_supervisor),
       parseFloat(longitud_supervisor),
-      parseFloat(latitud_obra),
-      parseFloat(longitud_obra)
+      parseFloat(proyecto.proyecto_latitud),
+      parseFloat(proyecto.proyecto_longitud)
     );
 
     const fueraDeRango = distancia > RADIO_MAXIMO_METROS;

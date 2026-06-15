@@ -63,7 +63,7 @@ export default function BuscadorDocumentos() {
           <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginBottom: 16 }}>
             Busca por RUT del trabajador, por código de obra, o por ambos simultáneamente.
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="form-grid-2">
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">RUT Trabajador</label>
               <input

@@ -207,7 +207,7 @@ export default function VincularFactura() {
                     )}
 
                     {/* Formulario vinculación */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
+                    <div className="form-grid-3" style={{ marginBottom: 12 }}>
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label">Folio factura *</label>
                         <input

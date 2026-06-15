@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Camera, MapPin, Send, Image, X, Circle } from 'lucide-react';
+import { Camera, MapPin, Send, Image, X, Circle, CheckCircle2, AlertTriangle } from 'lucide-react';
 import api from '../api/axios';
 import Toast, { useToast } from '../components/Toast';
 
@@ -11,7 +11,7 @@ export default function Evidencia() {
   const [proyectos, setProyectos] = useState([]);
   const [hitos, setHitos] = useState([]);
   const [preview, setPreview] = useState(null);
-  const [coords, setCoords] = useState({ lat: 0, lng: 0 });
+  const [coords, setCoords] = useState({ lat: null, lng: null });
   const [locating, setLocating] = useState(false);
   const [form, setForm] = useState({ proyecto_codigo_correlativo: '', hito_tecnico_id: '' });
   const [foto, setFoto] = useState(null);
@@ -45,15 +45,19 @@ export default function Evidencia() {
   }, []);
 
   const getLocation = () => {
-    if (!navigator.geolocation) { addToast('Geolocalización no disponible', 'warning'); return; }
+    if (!navigator.geolocation) { addToast('Geolocalización no disponible en este dispositivo', 'warning'); return; }
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       pos => {
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        addToast(`Ubicación: ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`, 'success');
+        addToast(`Ubicación GPS registrada: ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`, 'success');
         setLocating(false);
       },
-      () => { addToast('No se pudo obtener ubicación', 'error'); setLocating(false); }
+      () => {
+        addToast('No se pudo obtener GPS — ingresa las coordenadas manualmente', 'error');
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
@@ -115,8 +119,8 @@ export default function Evidencia() {
 
     const data = new FormData();
     data.append('hito_tecnico_id', form.hito_tecnico_id);
-    data.append('evidencia_fotografica_latitud', coords.lat);
-    data.append('evidencia_fotografica_longitud', coords.lng);
+    data.append('evidencia_fotografica_latitud', coords.lat ?? 0);
+    data.append('evidencia_fotografica_longitud', coords.lng ?? 0);
     data.append('foto', foto);
 
     setLoading(true);
@@ -187,12 +191,34 @@ export default function Evidencia() {
               onChange={handleFile}
             />
 
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              {hasCamera && (
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+              {hasCamera ? (
                 <button type="button" className="btn btn-secondary" onClick={openCamera}>
                   <Camera size={15} />
                   Usar cámara
                 </button>
+              ) : (
+                <div>
+                  <button
+                    type="button"
+                    disabled
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      padding: '8px 16px', borderRadius: 'var(--radius-md)',
+                      border: '1px solid rgba(220,38,38,0.5)',
+                      background: 'rgba(220,38,38,0.08)',
+                      color: 'var(--color-danger)',
+                      fontSize: 13, fontWeight: 500, cursor: 'not-allowed', opacity: 0.85
+                    }}
+                  >
+                    <Camera size={15} />
+                    Usar cámara
+                  </button>
+                  <div style={{ fontSize: 11, color: 'var(--color-danger)', marginTop: 5, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <AlertTriangle size={11} />
+                    Cámara no detectada en este dispositivo. Usa "Elegir archivo" para subir desde galería.
+                  </div>
+                </div>
               )}
               <button type="button" className="btn btn-secondary" onClick={() => fileInputRef.current?.click()}>
                 <Image size={15} />
@@ -211,16 +237,24 @@ export default function Evidencia() {
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 16 }}>
-            <button type="button" className="btn btn-secondary" onClick={getLocation} disabled={locating} style={{ flexShrink: 0 }}>
-              <MapPin size={15} />
-              {locating ? 'Obteniendo...' : 'Obtener ubicación'}
-            </button>
-            {coords.lat !== 0 && (
-              <span style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>
-                {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
-              </span>
-            )}
+          <div style={{ marginBottom: 16 }}>
+            <label className="form-label">Ubicación GPS</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <button type="button" className="btn btn-secondary" onClick={getLocation} disabled={locating} style={{ flexShrink: 0 }}>
+                <MapPin size={15} />
+                {locating ? 'Obteniendo...' : 'Obtener ubicación'}
+              </button>
+              {coords.lat !== null ? (
+                <span style={{ fontSize: 13, color: 'var(--color-green)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <CheckCircle2 size={13} />
+                  {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
+                </span>
+              ) : (
+                <span style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
+                  Sin ubicación — el GPS del dispositivo debe estar activo
+                </span>
+              )}
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary" disabled={loading || !foto || !form.hito_tecnico_id}>
